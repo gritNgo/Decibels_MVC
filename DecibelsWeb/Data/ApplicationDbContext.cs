@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DecibelsWeb.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace DecibelsWeb.Data
 {
@@ -9,5 +10,7 @@ namespace DecibelsWeb.Data
         {
             
         }
+
+        public DbSet<Category> Categories { get; set; }
     }
 }
