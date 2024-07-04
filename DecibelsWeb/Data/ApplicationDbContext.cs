@@ -12,5 +12,14 @@ namespace DecibelsWeb.Data
         }
 
         public DbSet<Category> Categories { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Category>().HasData(
+               new Category { Id = 1, Name = "Microphones", DisplayOrder = 1 },
+               new Category { Id = 2, Name = "Guitars", DisplayOrder = 2 },
+               new Category { Id = 3, Name = "Drums", DisplayOrder = 3 }
+               );
+        }
     }
 }
