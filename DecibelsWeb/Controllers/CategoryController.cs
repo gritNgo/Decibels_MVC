@@ -18,5 +18,12 @@ namespace DecibelsWeb.Controllers
             List<Category> objCategoryList = _db.Categories.ToList();
             return View(objCategoryList);
         }
+
+        // When creating a new page, first create an action method
+        // that will be invoked on the controller. Then the View
+        public IActionResult Create()
+        {
+            return View();
+        }
     }
 }
