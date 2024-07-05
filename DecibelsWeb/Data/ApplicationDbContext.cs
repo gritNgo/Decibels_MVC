@@ -3,12 +3,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DecibelsWeb.Data
 {
+    // Used to establish the connection between the database and Entity Framework 
     public class ApplicationDbContext : DbContext
     {
-        // Configuration for registering ApplicationDbContext to DbContext using options
+        // Required configuration to pass options to DbContext
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
-            
+
         }
 
         public DbSet<Category> Categories { get; set; }
