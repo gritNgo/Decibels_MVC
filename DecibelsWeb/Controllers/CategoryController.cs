@@ -30,6 +30,11 @@ namespace DecibelsWeb.Controllers
         [HttpPost]
         public IActionResult Create(Category obj) // an object that takes the Category Model properties of the form will be created
         {
+            //if (obj.Name == obj.DisplayOrder.ToString())
+            //{
+            //    ModelState.AddModelError("name", "Display Order cannot be the same as Category Name");
+            //}
+
             if (ModelState.IsValid) // by checking obj against the Category Model and it's validations
             {
                 _db.Categories.Add(obj); // Add is an Entity Framework method that tracks the given entity and any changes to be made in the database
