@@ -30,10 +30,14 @@ namespace DecibelsWeb.Controllers
         [HttpPost]
         public IActionResult Create(Category obj) // an object that takes the Category Model properties of the form will be created
         {
-            _db.Categories.Add(obj); // Add is an Entity Framework method that tracks the given entity and any changes to be made in the database
-            _db.SaveChanges();  // creates the Category on the database
-            // Redirects to the Index view which is reloaded once Category is added
-            return RedirectToAction("Index", "Category");
+            if (ModelState.IsValid) // by checking obj against the Category Model and it's validations
+            {
+                _db.Categories.Add(obj); // Add is an Entity Framework method that tracks the given entity and any changes to be made in the database
+                _db.SaveChanges();  // creates the Category on the database
+                // Redirects to the Index view which is reloaded once Category is added
+                return RedirectToAction("Index", "Category");
+            }
+            return View();
         }
     }
 }
