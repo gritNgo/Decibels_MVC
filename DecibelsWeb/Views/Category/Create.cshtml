@@ -7,6 +7,7 @@
             <hr/>
         </div>
         <div class="mb-3 row p-1">
+            <!-- asp-for is a input tag helper that works on the Category Model  -->
             <label asp-for="Name" class="p-0"></label>
             <input asp-for="Name" class="form-control" />
         </div>
@@ -16,9 +17,11 @@
         </div>
         <div class="row">
             <div class="col-6 col-md-3">
+                <!-- When the button is triggered it will hit the endpoint with the POST request invoking the IAction method Create                     in CategoryController -->
                 <button type="submit" class="btn btn-primary form-control">Create</button>
             </div>
             <div class="col-6 col-md-3">
+                <!-- asp-controller and asp-action are tag helpers  -->
                 <a asp-controller="Category" asp-action="Index" class="btn btn-outline-secondary form-control">
                     Back
                 </a>
