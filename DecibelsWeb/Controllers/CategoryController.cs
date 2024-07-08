@@ -37,8 +37,13 @@ namespace DecibelsWeb.Controllers
 
             if (ModelState.IsValid) // by checking obj against the Category Model and it's validations
             {
-                _db.Categories.Add(obj); // Add is an Entity Framework method that tracks the given entity and any changes to be made in the database
+                // Add is an Entity Framework method that tracks the given entity and any changes to be made in the database
+                _db.Categories.Add(obj);
+
                 _db.SaveChanges();  // creates the Category on the database
+
+                TempData["success"] = "Category created successfully"; // Displays this message on the next immediate render only
+
                 // Redirects to the Index view which is reloaded once Category is added
                 return RedirectToAction("Index", "Category");
             }
@@ -71,8 +76,8 @@ namespace DecibelsWeb.Controllers
             if (ModelState.IsValid) 
             {
                 _db.Categories.Update(obj);
-                _db.SaveChanges();  
-                
+                _db.SaveChanges();
+                TempData["success"] = "Category updated successfully";
                 return RedirectToAction("Index", "Category");
             }
             return View();
@@ -105,6 +110,7 @@ namespace DecibelsWeb.Controllers
 
             _db.Categories.Remove(obj);
             _db.SaveChanges();
+            TempData["success"] = "Category deleted successfully";
             return RedirectToAction("Index");
         }
     }
