@@ -6,7 +6,7 @@ namespace DecibelsWeb.Data
     // Used to establish the connection between the database and Entity Framework 
     public class ApplicationDbContext : DbContext
     {
-        // Required configuration to pass options to DbContext
+        // Required configuration to pass connection string as options to DbContext
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
 
