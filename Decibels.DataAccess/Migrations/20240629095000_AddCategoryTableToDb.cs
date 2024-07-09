@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Decibels.DataAccess.Data;
 
 #nullable disable
 
-namespace DecibelsWeb.Migrations
+namespace Decibels.DataAccess.Migrations
 {
     /// <inheritdoc />
     public partial class AddCategoryTableToDb : Migration

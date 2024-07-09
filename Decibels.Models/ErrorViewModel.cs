@@ -1,4 +1,4 @@
-namespace DecibelsWeb.Models
+namespace Decibels.Models
 {
     public class ErrorViewModel
     {

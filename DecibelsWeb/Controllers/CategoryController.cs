@@ -1,6 +1,6 @@
-﻿using DecibelsWeb.Data;
-using DecibelsWeb.Models;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Decibels.DataAccess.Data;
+using Decibels.Models;
 
 namespace DecibelsWeb.Controllers
 {

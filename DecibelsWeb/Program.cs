@@ -1,4 +1,4 @@
-using DecibelsWeb.Data;
+using Decibels.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

@@ -1,7 +1,7 @@
-﻿using DecibelsWeb.Models;
+﻿using Decibels.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace DecibelsWeb.Data
+namespace Decibels.DataAccess.Data
 {
     // Used to establish the connection between the database and Entity Framework 
     public class ApplicationDbContext : DbContext

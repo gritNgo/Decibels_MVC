@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace DecibelsWeb.Models
+namespace Decibels.Models
 {
     public class Category
     {
