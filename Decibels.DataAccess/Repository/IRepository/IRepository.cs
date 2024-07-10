@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Decibels.DataAccess.Repository.IRepository
 {
     // A Model class (ex: Category) will implement this interface
-    internal interface IRepository<T> where T : class
+    public interface IRepository<T> where T : class
     {
         // T- Category
         IEnumerable<T> GetAll();
