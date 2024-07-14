@@ -13,7 +13,6 @@ namespace Decibels.Models
         [MaxLength(30)]
         // DisplayName is a data annotation useful for client-side UI/validation
         [DisplayName("Category Name")]
-
         public string Name { get; set; }
 
         [DisplayName("Display Order")]

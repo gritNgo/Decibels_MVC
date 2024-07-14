@@ -12,15 +12,15 @@ namespace Decibels.DataAccess.Repository
 {
     public class Repository<T> : IRepository<T> where T : class
     {
+        // dependency injection in order to use DbSet
         private readonly ApplicationDbContext _db;
 
-        // 
         internal DbSet<T> dbSet;
 
         public Repository(ApplicationDbContext db)
         {
             _db = db;
-            // the current generic (T) will be set to the dbSet (ex: when this generic class is created on Category, the dbSet will be Set to Category (_db.Categories == dbSet))
+            // the current generic (T) will be set to the dbSet (ex: when this generic class is created on Category, the dbSet will be Set to Categories (_db.Categories == dbSet))
             this.dbSet = _db.Set<T>();
         }
 
