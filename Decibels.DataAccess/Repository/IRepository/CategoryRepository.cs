@@ -9,19 +9,16 @@ using System.Threading.Tasks;
 
 namespace Decibels.DataAccess.Repository.IRepository
 {
+    // Handles CRUD operations for Category
     public class CategoryRepository : Repository<Category>, ICategoryRepository
     {
-        private ApplicationDbContext _db;
+        private readonly ApplicationDbContext _db;
 
         public CategoryRepository(ApplicationDbContext db) : base(db)
         {
             _db = db;
         }
 
-        public void Save()
-        {
-            _db.SaveChanges();
-        }
 
 
         public void Update(Category obj)

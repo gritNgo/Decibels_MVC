@@ -15,6 +15,7 @@ namespace Decibels.DataAccess.Repository
         // dependency injection in order to use DbSet
         private readonly ApplicationDbContext _db;
 
+        // Set access to the current T Model
         internal DbSet<T> dbSet;
 
         public Repository(ApplicationDbContext db)

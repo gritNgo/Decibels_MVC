@@ -11,6 +11,5 @@ namespace Decibels.DataAccess.Repository.IRepository
     {
         // Update is here because the logic for updating Category is different than updating a Product
         void Update(Category obj);
-        void Save();
     }
 }
