@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 
 namespace Decibels.DataAccess.Repository.IRepository
 {
-    // T is a Generic class until implementation of this interface (A Model class ex: Category)
+    // Provides an interface for interacting with different data sources and keeps business logic independent of data access details
+    // T is a Generic class until implementation of this interface (ex: Category Model on which CRUD ops will be performed and will interact with DbContext)
     public interface IRepository<T> where T : class
     {
-        IEnumerable<T> GetAll(); // IEnumerable is like a 'collection'
+        IEnumerable<T> GetAll(); // IEnumerable is like a 'collection'  
         T Get(Expression<Func<T, bool>> filter);
         void Add(T entity);
         // Update is not here but in ICategoryRepository instead because the logic for updating Category for example is different than updating a Product

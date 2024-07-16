@@ -7,6 +7,7 @@ namespace DecibelsWeb.Controllers
 {
     public class CategoryController : Controller
     {
+        // DbContext is substituted with ICategoryRepository as DbContext is implemented in its implementation already 
         private readonly ICategoryRepository _categoryRepo;
 
         public CategoryController(ICategoryRepository db)
@@ -40,7 +41,6 @@ namespace DecibelsWeb.Controllers
             {
                 // Add is an Entity Framework method that tracks the given entity and any changes to be made in the database
                 _categoryRepo.Add(obj);
-
                 _categoryRepo.Save();  // creates the Category on the database
 
                 TempData["success"] = "Category created successfully"; // Displays this message on the next immediate render only
@@ -58,7 +58,7 @@ namespace DecibelsWeb.Controllers
                 return NotFound(); // or return an Error View
             }
 
-            Category? categoryFromDb = _categoryRepo.Get(category => category.Id == id); // Retrieves entity that's primary key
+            Category? categoryFromDb = _categoryRepo.Get(category => category.Id == id);
             /* Other ways to retrieve a record
              * Category? categoryFromDb1 = _db.Categories.FirstOrDefault(category => category.Id==id);
              * Category? categoryFromDb2 = _db.Categories.Where(category => category.Id == id).FirstOrDefault();

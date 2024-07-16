@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace Decibels.DataAccess.Repository.IRepository
 {
-    public  interface IUnitOfWork
+    /*
+     * Coordinates operations on multiple repositories, ensuring they're treated as single units.
+     * Tracks changes made through repos and applies them to the data store in a single commit, or rolls back if any error occurs
+     */
+    public interface IUnitOfWork
     {
         ICategoryRepository Category { get; }
 

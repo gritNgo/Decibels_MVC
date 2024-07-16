@@ -32,6 +32,7 @@ namespace Decibels.DataAccess.Repository
 
         public T Get(Expression<Func<T, bool>> filter)
         {
+            // Use to query against data sources of type T
             IQueryable<T> query = dbSet;
             query = query.Where(filter);
             return query.FirstOrDefault();
