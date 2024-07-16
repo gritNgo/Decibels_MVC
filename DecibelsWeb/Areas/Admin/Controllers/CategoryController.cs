@@ -3,8 +3,9 @@ using Decibels.DataAccess.Data;
 using Decibels.Models;
 using Decibels.DataAccess.Repository.IRepository;
 
-namespace DecibelsWeb.Controllers
+namespace DecibelsWeb.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class CategoryController : Controller
     {
         // UnitOfWork internally creates an object/implementation of CategoryRepository
@@ -78,7 +79,7 @@ namespace DecibelsWeb.Controllers
             if (ModelState.IsValid)
             {
                 _unitOfWork.Category.Update(obj);
-                _unitOfWork.Save();  
+                _unitOfWork.Save();
                 TempData["success"] = "Category updated successfully";
                 return RedirectToAction("Index", "Category");
             }
