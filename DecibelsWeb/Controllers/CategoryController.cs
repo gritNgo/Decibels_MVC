@@ -7,17 +7,18 @@ namespace DecibelsWeb.Controllers
 {
     public class CategoryController : Controller
     {
-        // DbContext is substituted with ICategoryRepository as DbContext is implemented in its implementation already 
-        private readonly ICategoryRepository _categoryRepo;
+        // UnitOfWork internally creates an object/implementation of CategoryRepository
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CategoryController(ICategoryRepository db)
+        public CategoryController(IUnitOfWork unitOfWork)
         {
-            _categoryRepo = db;
+            _unitOfWork = unitOfWork;
         }
 
         public IActionResult Index()
         {
-            List<Category> objCategoryList = _categoryRepo.GetAll().ToList();
+            // specify which object/repository being worked on to call methods
+            List<Category> objCategoryList = _unitOfWork.Category.GetAll().ToList();
             return View(objCategoryList);
         }
 
@@ -40,8 +41,8 @@ namespace DecibelsWeb.Controllers
             if (ModelState.IsValid) // by checking obj against the Category Model and it's validations
             {
                 // Add is an Entity Framework method that tracks the given entity and any changes to be made in the database
-                _categoryRepo.Add(obj);
-                _categoryRepo.Save();  // creates the Category on the database
+                _unitOfWork.Category.Add(obj);
+                _unitOfWork.Save();  // creates the Category on the database
 
                 TempData["success"] = "Category created successfully"; // Displays this message on the next immediate render only
 
@@ -58,7 +59,7 @@ namespace DecibelsWeb.Controllers
                 return NotFound(); // or return an Error View
             }
 
-            Category? categoryFromDb = _categoryRepo.Get(category => category.Id == id);
+            Category? categoryFromDb = _unitOfWork.Category.Get(category => category.Id == id);
             /* Other ways to retrieve a record
              * Category? categoryFromDb1 = _db.Categories.FirstOrDefault(category => category.Id==id);
              * Category? categoryFromDb2 = _db.Categories.Where(category => category.Id == id).FirstOrDefault();
@@ -76,8 +77,8 @@ namespace DecibelsWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                _categoryRepo.Update(obj);
-                _categoryRepo.Save();  
+                _unitOfWork.Category.Update(obj);
+                _unitOfWork.Save();  
                 TempData["success"] = "Category updated successfully";
                 return RedirectToAction("Index", "Category");
             }
@@ -91,7 +92,7 @@ namespace DecibelsWeb.Controllers
                 return NotFound();
             }
 
-            Category? categoryFromDb = _categoryRepo.Get(category => category.Id == id);
+            Category? categoryFromDb = _unitOfWork.Category.Get(category => category.Id == id);
             if (categoryFromDb == null)
             {
                 return NotFound();
@@ -102,15 +103,15 @@ namespace DecibelsWeb.Controllers
         [HttpPost, ActionName("Delete")]
         public IActionResult DeletePOST(int? id)
         {
-            Category? obj = _categoryRepo.Get(category => category.Id == id);
+            Category? obj = _unitOfWork.Category.Get(category => category.Id == id);
 
             if (obj == null)
             {
                 return NotFound();
             }
 
-            _categoryRepo.Remove(obj);
-            _categoryRepo.Save();
+            _unitOfWork.Category.Remove(obj);
+            _unitOfWork.Save();
             TempData["success"] = "Category deleted successfully";
             return RedirectToAction("Index");
         }
