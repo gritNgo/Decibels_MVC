@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Decibels.Models
 {
@@ -16,7 +17,7 @@ namespace Decibels.Models
         public string Name { get; set; }
         public string Description { get; set; }
         [Required]
-        [Range(1, 1000)]
+        [Column(TypeName = "decimal(8,2)")]
         public decimal Price { get; set; }
     }
 }
