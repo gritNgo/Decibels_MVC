@@ -32,7 +32,7 @@ namespace DecibelsWeb.Areas.Admin.Controllers
         public IActionResult Create()
         {
             // Retrieve Categories and convert to SelectListItems by using EF Core PROJECTIONS 
-            IEnumerable<SelectListItem> categoryList = _unitOfWork.Category
+            IEnumerable<SelectListItem> CategoryList = _unitOfWork.Category
                 .GetAll().Select(u => new SelectListItem
                 {
                     Text = u.Name,
@@ -40,8 +40,8 @@ namespace DecibelsWeb.Areas.Admin.Controllers
                 });
 
             // using ViewBag as the model of this action is Product, not Category
-            // ViewBag.categoryList: key       categoryList: value
-            ViewBag.categoryList = categoryList;
+            // ViewBag.categoryList: key       CategoryList: value
+            ViewBag.CategoryList = CategoryList;
 
             return View();
         }
