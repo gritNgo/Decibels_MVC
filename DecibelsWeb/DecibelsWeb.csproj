@@ -20,8 +20,4 @@
     <ProjectReference Include="..\Decibels.DataAccess\Decibels.DataAccess.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
 </Project>
