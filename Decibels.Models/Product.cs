@@ -23,5 +23,7 @@ namespace Decibels.Models
         public int CategoryId { get; set; }
         [ForeignKey("CategoryId")]
         public Category Category { get; set; } // Foreign key Navigation property for the Category Model's table
+        public string ImageUrl { get; set; }
+
     }
 }
