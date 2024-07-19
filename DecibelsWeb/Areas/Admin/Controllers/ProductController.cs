@@ -28,9 +28,7 @@ namespace DecibelsWeb.Areas.Admin.Controllers
             return View(objProductList);
         }
 
-        // When creating a new page from an existing page, first create an action method
-        // that will be invoked on the controller. Then the View.
-        public IActionResult Create()
+        public IActionResult Upsert(int? id) // Update + Insert
         {
             // Retrieve Categories and convert to SelectListItems by using EF Core PROJECTIONS 
             IEnumerable<SelectListItem> CategoryList = _unitOfWork.Category
@@ -50,12 +48,24 @@ namespace DecibelsWeb.Areas.Admin.Controllers
                 CategoryList = CategoryList,
                 Product = new Product()
             };
-            return View(productVM);
+
+            if (id == null || id == 0)
+            {
+                // create
+                return View(productVM);
+            }
+
+            else
+            {
+                // update
+                productVM.Product = _unitOfWork.Product.Get(u => u.Id == id);
+                return View(productVM);
+            }
         }
 
         // This annotation identifies an action that supports the HTTP POST method from the Create Product form (When this is absent it's always a GET)
         [HttpPost]
-        public IActionResult Create(ProductVM productVM) // an object that takes the Product Model properties of the form will be created
+        public IActionResult Upsert(ProductVM productVM, IFormFile? file) // an object that takes the Product Model properties of the form will be created
         {
             if (ModelState.IsValid) // by checking obj against the Product Model and it's validations
             {
@@ -79,39 +89,6 @@ namespace DecibelsWeb.Areas.Admin.Controllers
                 });
                 return View(productVM);
             }
-        }
-
-        public IActionResult Edit(int? id)
-        {
-            if (id == null || id == 0)
-            {
-                return NotFound(); // or return an Error View
-            }
-
-            Product? productFromDb = _unitOfWork.Product.Get(Product => Product.Id == id);
-            /* Other ways to retrieve a record
-             * Product? ProductFromDb1 = _db.Categories.FirstOrDefault(Product => Product.Id==id);
-             * Product? ProductFromDb2 = _db.Categories.Where(Product => Product.Id == id).FirstOrDefault();
-            */
-
-            if (productFromDb == null)
-            {
-                return NotFound();
-            }
-            return View(productFromDb);
-        }
-
-        [HttpPost]
-        public IActionResult Edit(Product obj)
-        {
-            if (ModelState.IsValid)
-            {
-                _unitOfWork.Product.Update(obj);
-                _unitOfWork.Save();
-                TempData["success"] = "Product updated successfully";
-                return RedirectToAction("Index", "Product");
-            }
-            return View();
         }
 
         public IActionResult Delete(int? id)
