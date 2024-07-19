@@ -22,13 +22,7 @@ namespace DecibelsWeb.Areas.Admin.Controllers
             // specify which object/repository being worked on to call methods
             List<Product> objProductList = _unitOfWork.Product.GetAll().ToList();
 
-            // Retrieve Categories and convert to SelectListItems by using EF Core PROJECTIONS 
-            IEnumerable<SelectListItem> categoryList = _unitOfWork.Category
-                .GetAll().Select(u => new SelectListItem 
-            {
-                Text = u.Name,
-                Value = u.Id.ToString()
-            });
+            
 
             return View(objProductList);
         }
@@ -37,6 +31,18 @@ namespace DecibelsWeb.Areas.Admin.Controllers
         // that will be invoked on the controller. Then the View.
         public IActionResult Create()
         {
+            // Retrieve Categories and convert to SelectListItems by using EF Core PROJECTIONS 
+            IEnumerable<SelectListItem> categoryList = _unitOfWork.Category
+                .GetAll().Select(u => new SelectListItem
+                {
+                    Text = u.Name,
+                    Value = u.Id.ToString()
+                });
+
+            // using ViewBag as the model of this action is Product, not Category
+            // ViewBag.categoryList: key       categoryList: value
+            ViewBag.categoryList = categoryList;
+
             return View();
         }
 
