@@ -3,6 +3,7 @@ using Decibels.DataAccess.Data;
 using Decibels.Models;
 using Decibels.DataAccess.Repository.IRepository;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Decibels.Models.ViewModels;
 
 namespace DecibelsWeb.Areas.Admin.Controllers
 {
@@ -22,7 +23,7 @@ namespace DecibelsWeb.Areas.Admin.Controllers
             // specify which object/repository being worked on to call methods
             List<Product> objProductList = _unitOfWork.Product.GetAll().ToList();
 
-            
+
 
             return View(objProductList);
         }
@@ -39,21 +40,27 @@ namespace DecibelsWeb.Areas.Admin.Controllers
                     Value = u.Id.ToString()
                 });
 
-            // using ViewBag as the model of this action is Product, not Category
-            // ViewBag.categoryList: key       CategoryList: value
-            ViewBag.CategoryList = CategoryList;
+            //using ViewBag as the model of this action is Product, not Category
+            //ViewBag.categoryList: key       CategoryList: value
+            //ViewBag.CategoryList = CategoryList;
+            // asp-items in Create View takes an IEnumerable of SelectListItem: ViewBag.categoryList
 
-            return View();
+            ProductVM productVM = new()
+            {
+                CategoryList = CategoryList,
+                Product = new Product()
+            };
+            return View(productVM);
         }
 
         // This annotation identifies an action that supports the HTTP POST method from the Create Product form (When this is absent it's always a GET)
         [HttpPost]
-        public IActionResult Create(Product obj) // an object that takes the Product Model properties of the form will be created
+        public IActionResult Create(ProductVM productVM) // an object that takes the Product Model properties of the form will be created
         {
             if (ModelState.IsValid) // by checking obj against the Product Model and it's validations
             {
                 // Add is an Entity Framework method that tracks the given entity and any changes to be made in the database
-                _unitOfWork.Product.Add(obj);
+                _unitOfWork.Product.Add(productVM.Product);
                 _unitOfWork.Save();  // creates the Product on the database
 
                 TempData["success"] = "Product created successfully"; // Displays this message on the next immediate render only
@@ -61,7 +68,17 @@ namespace DecibelsWeb.Areas.Admin.Controllers
                 // Redirects to the Index view which is reloaded once Product is added
                 return RedirectToAction("Index", "Product");
             }
-            return View();
+            else
+            {
+                // if ModelState is not valid, populate the dropdown again
+                productVM.CategoryList = _unitOfWork.Category
+                .GetAll().Select(u => new SelectListItem
+                {
+                    Text = u.Name,
+                    Value = u.Id.ToString()
+                });
+                return View(productVM);
+            }
         }
 
         public IActionResult Edit(int? id)

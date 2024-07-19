@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace Decibels.Models
 {
@@ -22,7 +23,9 @@ namespace Decibels.Models
 
         public int CategoryId { get; set; }
         [ForeignKey("CategoryId")]
+        [ValidateNever]
         public Category Category { get; set; } // Foreign key Navigation property for the Category Model's table
+        [ValidateNever]
         public string ImageUrl { get; set; }
 
     }
