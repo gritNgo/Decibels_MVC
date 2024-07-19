@@ -19,5 +19,9 @@ namespace Decibels.Models
         [Required]
         [Column(TypeName = "decimal(8,2)")]
         public decimal Price { get; set; }
+
+        public int CategoryId { get; set; }
+        [ForeignKey("CategoryId")]
+        public Category Category { get; set; } // Foreign key Navigation property for the Category Model's table
     }
 }
