@@ -22,9 +22,6 @@ namespace DecibelsWeb.Areas.Admin.Controllers
         {
             // specify which object/repository being worked on to call methods
             List<Product> objProductList = _unitOfWork.Product.GetAll().ToList();
-
-
-
             return View(objProductList);
         }
 
@@ -63,24 +60,19 @@ namespace DecibelsWeb.Areas.Admin.Controllers
             }
         }
 
-        // This annotation identifies an action that supports the HTTP POST method from the Create Product form (When this is absent it's always a GET)
         [HttpPost]
-        public IActionResult Upsert(ProductVM productVM, IFormFile? file) // an object that takes the Product Model properties of the form will be created
+        public IActionResult Upsert(ProductVM productVM, IFormFile? file)
         {
-            if (ModelState.IsValid) // by checking obj against the Product Model and it's validations
+            if (ModelState.IsValid) 
             {
-                // Add is an Entity Framework method that tracks the given entity and any changes to be made in the database
                 _unitOfWork.Product.Add(productVM.Product);
-                _unitOfWork.Save();  // creates the Product on the database
 
-                TempData["success"] = "Product created successfully"; // Displays this message on the next immediate render only
+                TempData["success"] = "Product created successfully";
 
-                // Redirects to the Index view which is reloaded once Product is added
                 return RedirectToAction("Index", "Product");
             }
             else
             {
-                // if ModelState is not valid, populate the dropdown again
                 productVM.CategoryList = _unitOfWork.Category
                 .GetAll().Select(u => new SelectListItem
                 {
