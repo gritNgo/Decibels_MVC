@@ -24,7 +24,7 @@ namespace DecibelsWeb.Areas.Admin.Controllers
         public IActionResult Index()
         {
             // specify which object/repository being worked on to call methods
-            List<Product> objProductList = _unitOfWork.Product.GetAll().ToList();
+            List<Product> objProductList = _unitOfWork.Product.GetAll(includeProperties:"Category").ToList();
             return View(objProductList);
         }
 

@@ -21,8 +21,12 @@ namespace Decibels.DataAccess.Repository
         public Repository(ApplicationDbContext db)
         {
             _db = db;
+
             // the current generic (T) will be set to the dbSet (ex: when this generic class is created on Category, the dbSet will be Set to Categories (_db.Categories == dbSet))
             this.dbSet = _db.Set<T>();
+
+            // Includes Navigation properties based on the Foreign Key relations
+            _db.Products.Include(u => u.Category).Include(u => u.CategoryId);
         }
 
         public void Add(T entity)
@@ -30,17 +34,35 @@ namespace Decibels.DataAccess.Repository
             dbSet.Add(entity);
         }
 
-        public T Get(Expression<Func<T, bool>> filter)
+        public T Get(Expression<Func<T, bool>> filter, string? includeProperties = null)
         {
             // Use to query against data sources of type T
             IQueryable<T> query = dbSet;
             query = query.Where(filter);
+            if (!string.IsNullOrEmpty(includeProperties))
+            {
+                // If there is more than one include property, add as comma separated values
+                foreach (var includeProp in includeProperties.Split(new char[] { ',' },
+                    StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(includeProp);
+                }
+            }
             return query.FirstOrDefault();
         }
 
-        public IEnumerable<T> GetAll()
+        public IEnumerable<T> GetAll(string? includeProperties = null)
         {
             IQueryable<T> query = dbSet;
+            // If there is more than one include property, add as comma separated values
+            if (!string.IsNullOrEmpty(includeProperties))
+            {
+                foreach (var includeProp in includeProperties.Split(new char[] { ',' },
+                    StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(includeProp);
+                }
+            }
             return query.ToList();
         }
 
