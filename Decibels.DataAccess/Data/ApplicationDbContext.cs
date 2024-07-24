@@ -1,10 +1,11 @@
 ﻿using Decibels.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Decibels.DataAccess.Data
 {
     // Used to establish the connection between the database and Entity Framework 
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext
     {
         // Required configuration to pass connection string as options to DbContext
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
@@ -17,6 +18,9 @@ namespace Decibels.DataAccess.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // configuration method required as keys of Identity tables are mapped on onModelCreating
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<Category>().HasData(
                new Category { Id = 1, Name = "Microphones", DisplayOrder = 1 },
                new Category { Id = 2, Name = "Guitars", DisplayOrder = 2 },
