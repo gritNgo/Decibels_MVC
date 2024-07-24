@@ -19,7 +19,10 @@
                             </div>
                         </div>
                     <div>
-                        <a href="#" class="btn btn-primary bg-gradient border-0 form-control">
+                        <!-- No need to have an href to redirect to Details as Index and Details are in the same Area and have the same Controller-->
+                        <a asp-action="Details" 
+                        asp-route-productId="@product.Id"
+                        class="btn btn-primary bg-gradient border-0 form-control">
                             Details
                         </a>
                     </div>
