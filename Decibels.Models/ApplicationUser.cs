@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace Decibels.Models
 {
+    // custom extension of IdentityUser
     public class ApplicationUser : IdentityUser
     {
         [Required]
