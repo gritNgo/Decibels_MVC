@@ -1,11 +1,12 @@
 ﻿using Decibels.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Decibels.DataAccess.Data
 {
     // Used to establish the connection between the database and Entity Framework 
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     {
         // Required configuration to pass connection string as options to DbContext
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
