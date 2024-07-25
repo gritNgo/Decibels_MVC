@@ -2,10 +2,13 @@
 using Decibels.DataAccess.Data;
 using Decibels.Models;
 using Decibels.DataAccess.Repository.IRepository;
+using Microsoft.AspNetCore.Authorization;
+using Decibels.Utility;
 
 namespace DecibelsWeb.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = StaticDetails.Role_Admin)]
     public class CategoryController : Controller
     {
         // UnitOfWork internally creates an object/implementation of CategoryRepository

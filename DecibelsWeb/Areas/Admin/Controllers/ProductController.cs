@@ -4,10 +4,13 @@ using Decibels.Models;
 using Decibels.DataAccess.Repository.IRepository;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Decibels.Models.ViewModels;
+using Decibels.Utility;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DecibelsWeb.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = StaticDetails.Role_Admin)]
     public class ProductController : Controller
     {
         // UnitOfWork internally creates an object/implementation of ProductRepository
