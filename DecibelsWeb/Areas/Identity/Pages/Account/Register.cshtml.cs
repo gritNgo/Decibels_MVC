@@ -110,10 +110,10 @@ namespace DecibelsWeb.Areas.Identity.Pages.Account
             if (! _roleManager.RoleExistsAsync(StaticDetails.Role_Customer).GetAwaiter().GetResult())
             {
                 // No need for 'SaveChanges' as CreateAsync takes care of that
-                _roleManager.CreateAsync(new IdentityRole(StaticDetails.Role_Customer));
-                _roleManager.CreateAsync(new IdentityRole(StaticDetails.Role_Employee));
-                _roleManager.CreateAsync(new IdentityRole(StaticDetails.Role_Admin));
-                _roleManager.CreateAsync(new IdentityRole(StaticDetails.Role_Company));
+                _roleManager.CreateAsync(new IdentityRole(StaticDetails.Role_Customer)).GetAwaiter().GetResult();
+                _roleManager.CreateAsync(new IdentityRole(StaticDetails.Role_Employee)).GetAwaiter().GetResult();
+                _roleManager.CreateAsync(new IdentityRole(StaticDetails.Role_Admin)).GetAwaiter().GetResult();
+                _roleManager.CreateAsync(new IdentityRole(StaticDetails.Role_Company)).GetAwaiter().GetResult();
             }
 
             ReturnUrl = returnUrl;
