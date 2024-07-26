@@ -108,6 +108,15 @@ namespace DecibelsWeb.Areas.Identity.Pages.Account
             public string? Role { get; set; }
             [ValidateNever]
             public IEnumerable<SelectListItem> RoleList { get; set; }
+
+            [Required]
+            public string? Name { get; set; }
+            public string? PhoneNumber { get; set; }
+            public string? Street { get; set; }
+            public string? City { get; set; }
+            public string? State { get; set; }
+            public string? PostalCode { get; set; }
+
         }
 
         public async Task OnGetAsync(string returnUrl = null)
@@ -146,6 +155,14 @@ namespace DecibelsWeb.Areas.Identity.Pages.Account
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+                user.Street = Input.Street;
+                user.City = Input.City;
+                user.State = Input.State;
+                user.PostalCode = Input.PostalCode;
+                user.Name = Input.Name;
+                user.PhoneNumber = Input.PhoneNumber;
+
+
                 // Creates an entry in the AspNetUsers table (verify UserId and RoleId on AspNetUserRoles table )
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
