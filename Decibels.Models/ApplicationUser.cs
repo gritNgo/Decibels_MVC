@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,6 +20,11 @@ namespace Decibels.Models
         public string? City{ get; set; }
         public string? State { get; set; }
         public string? PostalCode { get; set; }
+
+        public int? CompanyId { get; set; } // nullable as a user can be a customer
+        [ForeignKey("CompanyId")]
+        [ValidateNever] // as this won't be populated when creating a user
+        public Company Company { get; set; }
 
     }
 }

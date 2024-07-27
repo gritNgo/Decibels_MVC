@@ -21,11 +21,11 @@ namespace Decibels.Models
         [Column(TypeName = "decimal(8,2)")]
         public decimal Price { get; set; }
 
-        public int CategoryId { get; set; }
+        public int CategoryId { get; set; } // Foreign key Navigation property for the Category Model's table
 
         [ForeignKey("CategoryId")]
         [ValidateNever]
-        public Category Category { get; set; } // Foreign key Navigation property for the Category Model's table
+        public Category Category { get; set; } 
 
         [ValidateNever]
         public string ImageUrl { get; set; }
