@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace Decibels.DataAccess.Repository.IRepository
 {
-    public interface IProductRepository : IRepository<Product>
+    public interface IShoppingCartRepository : IRepository<ShoppingCart>
     {
-        void Update(Product obj);
+        void Update(ShoppingCart obj);
     }
 }
