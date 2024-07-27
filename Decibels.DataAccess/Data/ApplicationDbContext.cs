@@ -16,6 +16,7 @@ namespace Decibels.DataAccess.Data
 
         public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<Company> Companies { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -27,6 +28,12 @@ namespace Decibels.DataAccess.Data
                new Category { Id = 1, Name = "Microphones", DisplayOrder = 1 },
                new Category { Id = 2, Name = "Guitars", DisplayOrder = 2 },
                new Category { Id = 3, Name = "Drums", DisplayOrder = 3 }
+               );
+
+            modelBuilder.Entity<Company>().HasData(
+               new Company { Id = 1, Name = "Mikes", Street = "34 Mikes St", City = "Los Angeles", State = "CA", PhoneNumber = "0730249688", PostalCode = "NW25RR" },
+               new Company { Id = 2, Name = "ShredLand", Street = "42 Ernie Ball St", City = "Seattle", State = "WA", PhoneNumber = "0733576568", PostalCode = "WD25NG" },
+               new Company { Id = 3, Name = "Percussionz", Street = "8 Drums Avenue", City = "Manhattan", State = "NY", PhoneNumber = "0739513526", PostalCode = "SE85GP" }
                );
 
             modelBuilder.Entity<Product>().HasData(

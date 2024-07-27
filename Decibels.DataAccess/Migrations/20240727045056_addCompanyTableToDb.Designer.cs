@@ -4,6 +4,7 @@ using Decibels.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Decibels.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240727045056_addCompanyTableToDb")]
+    partial class addCompanyTableToDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -99,38 +102,6 @@ namespace Decibels.DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Companies");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            City = "Los Angeles",
-                            Name = "Mikes",
-                            PhoneNumber = "0730249688",
-                            PostalCode = "NW25RR",
-                            State = "CA",
-                            Street = "34 Mikes St"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            City = "Seattle",
-                            Name = "ShredLand",
-                            PhoneNumber = "0733576568",
-                            PostalCode = "WD25NG",
-                            State = "WA",
-                            Street = "42 Ernie Ball St"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            City = "Manhattan",
-                            Name = "Percussionz",
-                            PhoneNumber = "0739513526",
-                            PostalCode = "SE85GP",
-                            State = "NY",
-                            Street = "8 Drums Avenue"
-                        });
                 });
 
             modelBuilder.Entity("Decibels.Models.Product", b =>
