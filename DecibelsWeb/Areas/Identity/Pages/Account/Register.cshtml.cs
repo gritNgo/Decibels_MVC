@@ -175,6 +175,11 @@ namespace DecibelsWeb.Areas.Identity.Pages.Account
                 user.Name = Input.Name;
                 user.PhoneNumber = Input.PhoneNumber;
 
+                if (Input.Role == StaticDetails.Role_Company)
+                {
+                    user.CompanyId = Input.CompanyId;
+                }
+
 
                 // Creates an entry in the AspNetUsers table (verify UserId and RoleId on AspNetUserRoles table )
                 var result = await _userManager.CreateAsync(user, Input.Password);
