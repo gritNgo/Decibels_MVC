@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 
 namespace Decibels.DataAccess.Repository
 {
-    // Handles CRUD operations for Category Model
     public class ProductRepository : Repository<Product>, IProductRepository
     {
         private readonly ApplicationDbContext _db;
