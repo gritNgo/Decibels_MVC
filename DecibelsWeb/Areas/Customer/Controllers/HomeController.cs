@@ -1,7 +1,9 @@
 using Decibels.DataAccess.Repository.IRepository;
 using Decibels.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace DecibelsWeb.Areas.Customer.Controllers
 {
@@ -33,6 +35,22 @@ namespace DecibelsWeb.Areas.Customer.Controllers
 
             };
             return View(cart);
+        }
+
+        [HttpPost]
+        [Authorize] // if a user is posting (Adding to cart) they must be authorized regardless of Role
+        public IActionResult Details(ShoppingCart shoppingCart)
+        {
+            // get userID of the logged in user
+            var claimsIdentity = (ClaimsIdentity)User.Identity; 
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            shoppingCart.ApplicationUserId = userId;
+
+            _unitOfWork.ShoppingCart.Add(shoppingCart);
+            _unitOfWork.Save();
+
+            return RedirectToAction(nameof(Index));
         }
 
         public IActionResult Privacy()
