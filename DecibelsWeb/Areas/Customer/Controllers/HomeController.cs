@@ -47,7 +47,23 @@ namespace DecibelsWeb.Areas.Customer.Controllers
 
             shoppingCart.ApplicationUserId = userId;
 
-            _unitOfWork.ShoppingCart.Add(shoppingCart);
+            // check cart doesn't exist for user and productId as both must match same record updates
+            ShoppingCart cartFromDb = _unitOfWork.ShoppingCart.Get(
+                u => u.ApplicationUserId == userId && u.ProductId == shoppingCart.ProductId);
+
+            if (cartFromDb != null)
+            {
+                // shopping cart exists
+                cartFromDb.Quantity += shoppingCart.Quantity;
+                _unitOfWork.ShoppingCart.Update(cartFromDb);
+            }
+
+            else
+            {
+                // add cart record
+                _unitOfWork.ShoppingCart.Add(shoppingCart);
+            }
+
             _unitOfWork.Save();
 
             return RedirectToAction(nameof(Index));
