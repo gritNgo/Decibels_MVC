@@ -44,10 +44,9 @@ namespace DecibelsWeb.Areas.Customer.Controllers
             // get userID of the logged in user
             var claimsIdentity = (ClaimsIdentity)User.Identity; 
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-
             shoppingCart.ApplicationUserId = userId;
 
-            // check cart doesn't exist for user and productId as both must match same record updates
+            // create a cart where user ID is same as the cart ID
             ShoppingCart cartFromDb = _unitOfWork.ShoppingCart.Get(
                 u => u.ApplicationUserId == userId && u.ProductId == shoppingCart.ProductId);
 
@@ -55,7 +54,7 @@ namespace DecibelsWeb.Areas.Customer.Controllers
             {
                 // shopping cart exists
                 cartFromDb.Quantity += shoppingCart.Quantity;
-                _unitOfWork.ShoppingCart.Update(cartFromDb);
+                //_unitOfWork.ShoppingCart.Update(cartFromDb);
             }
 
             else

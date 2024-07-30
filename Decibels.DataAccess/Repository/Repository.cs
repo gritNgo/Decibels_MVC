@@ -34,21 +34,40 @@ namespace Decibels.DataAccess.Repository
             dbSet.Add(entity);
         }
 
-        public T Get(Expression<Func<T, bool>> filter, string? includeProperties = null)
+        public T Get(Expression<Func<T, bool>> filter, string? includeProperties = null, bool tracked = false)
         {
-            // Use to query against data sources of type T
-            IQueryable<T> query = dbSet;
-            query = query.Where(filter);
-            if (!string.IsNullOrEmpty(includeProperties))
+            if (tracked)
             {
-                // If there is more than one include property, add as comma separated values
-                foreach (var includeProp in includeProperties.Split(new char[] { ',' },
-                    StringSplitOptions.RemoveEmptyEntries))
+                // Use to query against data sources of type T
+                IQueryable<T> query = dbSet;
+                query = query.Where(filter);
+                if (!string.IsNullOrEmpty(includeProperties))
                 {
-                    query = query.Include(includeProp);
+                    // If there is more than one include property, add as comma separated values
+                    foreach (var includeProp in includeProperties.Split(new char[] { ',' },
+                        StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        query = query.Include(includeProp);
+                    }
                 }
+                return query.FirstOrDefault();
             }
-            return query.FirstOrDefault();
+
+            else
+            {
+                IQueryable<T> query = dbSet.AsNoTracking();
+                query = query.Where(filter);
+                if (!string.IsNullOrEmpty(includeProperties))
+                {
+                    // If there is more than one include property, add as comma separated values
+                    foreach (var includeProp in includeProperties.Split(new char[] { ',' },
+                        StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        query = query.Include(includeProp);
+                    }
+                }
+                return query.FirstOrDefault();
+            }
         }
 
         public IEnumerable<T> GetAll(string? includeProperties = null)
