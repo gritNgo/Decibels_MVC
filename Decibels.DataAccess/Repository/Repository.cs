@@ -62,9 +62,13 @@ namespace Decibels.DataAccess.Repository
             return query.FirstOrDefault();
         }
 
-        public IEnumerable<T> GetAll(string? includeProperties = null)
+        public IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter, string? includeProperties = null)
         {
             IQueryable<T> query = dbSet;
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
             // If there is more than one include property, add as comma separated values
             if (!string.IsNullOrEmpty(includeProperties))
             {
