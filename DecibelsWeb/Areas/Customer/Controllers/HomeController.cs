@@ -54,14 +54,14 @@ namespace DecibelsWeb.Areas.Customer.Controllers
             {
                 // shopping cart exists
                 cartFromDb.Quantity += shoppingCart.Quantity;
-                //_unitOfWork.ShoppingCart.Update(cartFromDb);
+                _unitOfWork.ShoppingCart.Update(cartFromDb);
             }
-
             else
             {
                 // add cart record
                 _unitOfWork.ShoppingCart.Add(shoppingCart);
             }
+            TempData["success"] = "Cart updated successfully";
 
             _unitOfWork.Save();
 

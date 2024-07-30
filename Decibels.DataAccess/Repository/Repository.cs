@@ -7,6 +7,7 @@ using Decibels.DataAccess.Data;
 using Decibels.DataAccess.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Decibels.DataAccess.Repository
 {
@@ -36,38 +37,29 @@ namespace Decibels.DataAccess.Repository
 
         public T Get(Expression<Func<T, bool>> filter, string? includeProperties = null, bool tracked = false)
         {
+            IQueryable<T> query;
             if (tracked)
             {
                 // Use to query against data sources of type T
-                IQueryable<T> query = dbSet;
-                query = query.Where(filter);
-                if (!string.IsNullOrEmpty(includeProperties))
-                {
-                    // If there is more than one include property, add as comma separated values
-                    foreach (var includeProp in includeProperties.Split(new char[] { ',' },
-                        StringSplitOptions.RemoveEmptyEntries))
-                    {
-                        query = query.Include(includeProp);
-                    }
-                }
-                return query.FirstOrDefault();
+                 query = dbSet;                
             }
 
             else
             {
-                IQueryable<T> query = dbSet.AsNoTracking();
-                query = query.Where(filter);
-                if (!string.IsNullOrEmpty(includeProperties))
-                {
-                    // If there is more than one include property, add as comma separated values
-                    foreach (var includeProp in includeProperties.Split(new char[] { ',' },
-                        StringSplitOptions.RemoveEmptyEntries))
-                    {
-                        query = query.Include(includeProp);
-                    }
-                }
-                return query.FirstOrDefault();
+                query = dbSet.AsNoTracking();                
             }
+
+            query = query.Where(filter);
+            if (!string.IsNullOrEmpty(includeProperties))
+            {
+                // If there is more than one include property, add as comma separated values
+                foreach (var includeProp in includeProperties.Split(new char[] { ',' },
+                    StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(includeProp);
+                }
+            }
+            return query.FirstOrDefault();
         }
 
         public IEnumerable<T> GetAll(string? includeProperties = null)
