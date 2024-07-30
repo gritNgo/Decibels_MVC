@@ -46,7 +46,7 @@ namespace DecibelsWeb.Areas.Customer.Controllers
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
             shoppingCart.ApplicationUserId = userId;
 
-            // create a cart where user ID is same as the cart ID
+            // create a cart where user ID is same as a product ID
             ShoppingCart cartFromDb = _unitOfWork.ShoppingCart.Get(
                 u => u.ApplicationUserId == userId && u.ProductId == shoppingCart.ProductId);
 

@@ -25,5 +25,9 @@ namespace Decibels.Models
         [ForeignKey("ApplicationUserId")]
         [ValidateNever]
         public ApplicationUser ApplicationUser { get; set; }
+
+        // Not in DB, populated for display only
+        [NotMapped]
+        public decimal Price { get; set; }
     }
 }

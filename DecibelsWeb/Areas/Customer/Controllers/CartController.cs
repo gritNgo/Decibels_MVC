@@ -1,4 +1,5 @@
 ﻿using Decibels.DataAccess.Repository.IRepository;
+using Decibels.Models;
 using Decibels.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -30,7 +31,18 @@ namespace DecibelsWeb.Areas.Customer.Controllers
                     u => u.ApplicationUserId == userId, includeProperties: "Product")
             };
 
+            foreach (var cart in ShoppingCartVM.ShoppingCartList)
+            {
+                cart.Price = GetProductPrice(cart);
+                ShoppingCartVM.OrderTotal += (cart.Price * cart.Quantity);
+            }
+
             return View(ShoppingCartVM);
+        }
+
+        private decimal GetProductPrice(ShoppingCart shoppingCart)
+        {
+            return shoppingCart.Product.Price;
         }
     }
 }
