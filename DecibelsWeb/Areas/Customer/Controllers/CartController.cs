@@ -28,13 +28,14 @@ namespace DecibelsWeb.Areas.Customer.Controllers
             ShoppingCartVM = new()
             {
                 ShoppingCartList = _unitOfWork.ShoppingCart.GetAll(
-                    u => u.ApplicationUserId == userId, includeProperties: "Product")
+                    u => u.ApplicationUserId == userId, includeProperties: "Product"),
+                OrderHeader = new()  // so OrderHeader != null and does not throw exception
             };
 
             foreach (var cart in ShoppingCartVM.ShoppingCartList)
             {
                 cart.Price = GetProductPrice(cart);
-                ShoppingCartVM.OrderTotal += (cart.Price * cart.Quantity);
+                ShoppingCartVM.OrderHeader.OrderTotal += (cart.Price * cart.Quantity);
             }
 
             return View(ShoppingCartVM);
