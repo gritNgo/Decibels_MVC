@@ -91,7 +91,9 @@ namespace DecibelsWeb.Areas.Customer.Controllers
 			ShoppingCartVM.OrderHeader.OrderDate = System.DateTime.Now;
 			ShoppingCartVM.OrderHeader.ApplicationUserId = userId;
 
-			ShoppingCartVM.OrderHeader.ApplicationUser = _unitOfWork.ApplicationUser.Get(u => u.Id == userId);
+            // create a new object instead of populating the navigation property
+			// ShoppingCartVM.OrderHeader.ApplicationUser to avoid duplicate records
+            ApplicationUser applicationUser = _unitOfWork.ApplicationUser.Get(u => u.Id == userId);
 
 			foreach (var cart in ShoppingCartVM.ShoppingCartList)
 			{
@@ -99,9 +101,9 @@ namespace DecibelsWeb.Areas.Customer.Controllers
 				ShoppingCartVM.OrderHeader.OrderTotal += (cart.Price * cart.Quantity);
 			}
 
-			if (ShoppingCartVM.OrderHeader.ApplicationUser.CompanyId.GetValueOrDefault() == 0)
+			if (applicationUser.CompanyId.GetValueOrDefault() == 0)
 			{
-				// regular customer account so need to get payment
+				// regular customer
 				ShoppingCartVM.OrderHeader.PaymentStatus = StaticDetails.PaymentStatusPending;
 				ShoppingCartVM.OrderHeader.OrderStatus = StaticDetails.StatusPending;
 			}
@@ -112,7 +114,10 @@ namespace DecibelsWeb.Areas.Customer.Controllers
 				ShoppingCartVM.OrderHeader.OrderStatus = StaticDetails.StatusPending;
 			}
 
-			_unitOfWork.OrderHeader.Add(ShoppingCartVM.OrderHeader);
+            // Adding OrderHeader as a new entity here also adds and populates all the navigation properties
+			// (ex: ShoppingCartVM.OrderHeader.ApplicationUser), so to avoid duplicate entitities
+			// from being created when inserting a new record is why a new ApplicationUser applicationUser was created
+            _unitOfWork.OrderHeader.Add(ShoppingCartVM.OrderHeader);
 			_unitOfWork.Save();
 			foreach (var cart in ShoppingCartVM.ShoppingCartList)
 			{
@@ -127,9 +132,21 @@ namespace DecibelsWeb.Areas.Customer.Controllers
 				_unitOfWork.Save();
 			}
 
+			if (applicationUser.CompanyId.GetValueOrDefault() == 0)
+			{
+				// regular customer account so need to get payment
+				// stripe logic
+			}
 
-			return View(ShoppingCartVM);
+
+			return RedirectToAction(nameof(OrderConfirmation), new { id = ShoppingCartVM.OrderHeader.Id});
 		}
+
+		public IActionResult OrderConfirmation(int id)
+		{
+			return View(id);
+		}
+
 
 		public IActionResult Plus(int cartId)
 		{
