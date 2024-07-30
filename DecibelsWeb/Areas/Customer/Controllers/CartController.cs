@@ -22,6 +22,7 @@ namespace DecibelsWeb.Areas.Customer.Controllers
 
         public IActionResult Index()
         {
+            // get userID of the logged in user
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 
@@ -42,7 +43,33 @@ namespace DecibelsWeb.Areas.Customer.Controllers
         }
 
         public IActionResult Summary() {
-            return View();
+            // get userID of the logged in user
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            ShoppingCartVM = new()
+            {
+                ShoppingCartList = _unitOfWork.ShoppingCart.GetAll(
+                    u => u.ApplicationUserId == userId, includeProperties: "Product"),
+                OrderHeader = new()  // so OrderHeader != null and does not throw exception
+            };
+
+            ShoppingCartVM.OrderHeader.ApplicationUser = _unitOfWork.ApplicationUser.Get(u=> u.Id == userId);
+
+            ShoppingCartVM.OrderHeader.Name = ShoppingCartVM.OrderHeader.ApplicationUser.Name;
+            ShoppingCartVM.OrderHeader.PhoneNumber= ShoppingCartVM.OrderHeader.ApplicationUser.PhoneNumber;
+            ShoppingCartVM.OrderHeader.Street= ShoppingCartVM.OrderHeader.ApplicationUser.Street;
+            ShoppingCartVM.OrderHeader.City= ShoppingCartVM.OrderHeader.ApplicationUser.City;
+            ShoppingCartVM.OrderHeader.State= ShoppingCartVM.OrderHeader.ApplicationUser.State;
+            ShoppingCartVM.OrderHeader.PostalCode = ShoppingCartVM.OrderHeader.ApplicationUser.PostalCode;
+
+
+            foreach (var cart in ShoppingCartVM.ShoppingCartList)
+            {
+                cart.Price = GetProductPrice(cart);
+                ShoppingCartVM.OrderHeader.OrderTotal += (cart.Price * cart.Quantity);
+            }
+            return View(ShoppingCartVM);
         }
 
         public IActionResult Plus(int cartId)
