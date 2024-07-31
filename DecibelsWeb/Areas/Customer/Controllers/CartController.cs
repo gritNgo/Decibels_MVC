@@ -111,7 +111,7 @@ namespace DecibelsWeb.Areas.Customer.Controllers
             {
                 // company user
                 ShoppingCartVM.OrderHeader.PaymentStatus = StaticDetails.PaymentStatusDelayedPayment;
-                ShoppingCartVM.OrderHeader.OrderStatus = StaticDetails.StatusPending;
+                ShoppingCartVM.OrderHeader.OrderStatus = StaticDetails.StatusApproved;
             }
 
             /* Adding OrderHeader as a new entity here adds and populates all the navigation properties.
