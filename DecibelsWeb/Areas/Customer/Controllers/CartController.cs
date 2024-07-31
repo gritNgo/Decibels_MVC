@@ -4,6 +4,7 @@ using Decibels.Models.ViewModels;
 using Decibels.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Stripe.Checkout;
 using System.Security.Claims;
 
 namespace DecibelsWeb.Areas.Customer.Controllers
@@ -117,8 +118,8 @@ namespace DecibelsWeb.Areas.Customer.Controllers
             /* Adding OrderHeader as a new entity here adds and populates all the navigation properties.
             * To avoid duplicate entitities from being created when inserting a new record is why a
 			* new ApplicationUser applicationUser was created instead of repopulating
-			* the navigation property ShoppingCartVM.OrderHeader.ApplicationUser */ 
-            
+			* the navigation property ShoppingCartVM.OrderHeader.ApplicationUser */
+
             _unitOfWork.OrderHeader.Add(ShoppingCartVM.OrderHeader);
             _unitOfWork.Save();
             foreach (var cart in ShoppingCartVM.ShoppingCartList)
@@ -138,6 +139,39 @@ namespace DecibelsWeb.Areas.Customer.Controllers
             {
                 // regular customer account so need to get payment
                 // stripe logic
+                var domain = "https://localhost:7267/";
+                var options = new Stripe.Checkout.SessionCreateOptions
+                {
+                    SuccessUrl = domain+ $"customer/cart/OrderConfirmation?id={ShoppingCartVM.OrderHeader.Id}",
+                    CancelUrl = domain+"customer/cart/index",
+                    LineItems = new List<Stripe.Checkout.SessionLineItemOptions>(),
+                    Mode = "payment",
+                };
+
+                foreach (var item in ShoppingCartVM.ShoppingCartList)
+                {
+                    var sessionLineItem = new Stripe.Checkout.SessionLineItemOptions { 
+                        // data used to create a new Price object
+                        PriceData = new Stripe.Checkout.SessionLineItemPriceDataOptions { 
+                            UnitAmount = (long)(item.Price*100), // €20.50 => 2050
+                            Currency = "usd",
+                            ProductData = new Stripe.Checkout.SessionLineItemPriceDataProductDataOptions { 
+                                Name = item.Product.Name
+                            }
+                        },
+                        Quantity = item.Quantity
+                    };
+                    options.LineItems.Add(sessionLineItem);
+                }
+
+                var service = new Stripe.Checkout.SessionService();
+                Session session = service.Create(options);
+                _unitOfWork.OrderHeader.UpdateStripePaymentId(ShoppingCartVM.OrderHeader.Id, session.Id, session.PaymentIntentId);
+                _unitOfWork.Save();
+
+                Response.Headers.Add("Location", session.Url);
+                // redirect to the above URL with this status code
+                return new StatusCodeResult(303);
             }
 
 
