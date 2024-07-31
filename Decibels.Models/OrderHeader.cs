@@ -30,7 +30,9 @@ namespace Decibels.Models
         public DateTime PaymentDate { get; set; }
         public DateOnly PaymentDueDate { get; set; }
 
-        // unique identifier for Stripe 
+        // necessary to get PaymentIntentId, is generated when user tries to make a payment
+        public string? SessionId { get; set; }
+        // unique identifier for Stripe generated when SessionId is generated
         public string? PaymentIntentId { get; set; }
 
         [Required]
