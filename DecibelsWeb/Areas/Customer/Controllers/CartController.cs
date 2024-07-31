@@ -142,20 +142,23 @@ namespace DecibelsWeb.Areas.Customer.Controllers
                 var domain = "https://localhost:7267/";
                 var options = new Stripe.Checkout.SessionCreateOptions
                 {
-                    SuccessUrl = domain+ $"customer/cart/OrderConfirmation?id={ShoppingCartVM.OrderHeader.Id}",
-                    CancelUrl = domain+"customer/cart/index",
+                    SuccessUrl = domain + $"customer/cart/OrderConfirmation?id={ShoppingCartVM.OrderHeader.Id}",
+                    CancelUrl = domain + "customer/cart/index",
                     LineItems = new List<Stripe.Checkout.SessionLineItemOptions>(),
                     Mode = "payment",
                 };
 
                 foreach (var item in ShoppingCartVM.ShoppingCartList)
                 {
-                    var sessionLineItem = new Stripe.Checkout.SessionLineItemOptions { 
+                    var sessionLineItem = new Stripe.Checkout.SessionLineItemOptions
+                    {
                         // data used to create a new Price object
-                        PriceData = new Stripe.Checkout.SessionLineItemPriceDataOptions { 
-                            UnitAmount = (long)(item.Price*100), // €20.50 => 2050
+                        PriceData = new Stripe.Checkout.SessionLineItemPriceDataOptions
+                        {
+                            UnitAmount = (long)(item.Price * 100), // €20.50 => 2050
                             Currency = "usd",
-                            ProductData = new Stripe.Checkout.SessionLineItemPriceDataProductDataOptions { 
+                            ProductData = new Stripe.Checkout.SessionLineItemPriceDataProductDataOptions
+                            {
                                 Name = item.Product.Name
                             }
                         },
@@ -169,8 +172,9 @@ namespace DecibelsWeb.Areas.Customer.Controllers
                 _unitOfWork.OrderHeader.UpdateStripePaymentId(ShoppingCartVM.OrderHeader.Id, session.Id, session.PaymentIntentId);
                 _unitOfWork.Save();
 
+                // URL to redirect to
                 Response.Headers.Add("Location", session.Url);
-                // redirect to the above URL with this status code
+                // redirect to URL with this status code
                 return new StatusCodeResult(303);
             }
 
@@ -180,6 +184,28 @@ namespace DecibelsWeb.Areas.Customer.Controllers
 
         public IActionResult OrderConfirmation(int id)
         {
+            OrderHeader orderHeader = _unitOfWork.OrderHeader.Get(u => u.Id == id, includeProperties: "ApplicationUser");
+            if (orderHeader.PaymentStatus != StaticDetails.PaymentStatusDelayedPayment)
+            {
+                // this is a Customer order
+
+                var service = new SessionService();
+                Session session = service.Get(orderHeader.SessionId);
+
+                if (session.PaymentStatus.ToLower() == "paid")  // paid is an enum value in PaymentStatus
+                {
+                    // success, so with sessionId it will have the paymentIntentId
+                    _unitOfWork.OrderHeader.UpdateStripePaymentId(id, session.Id, session.PaymentIntentId);
+                    _unitOfWork.OrderHeader.UpdateStatus(id, StaticDetails.StatusApproved, StaticDetails.PaymentStatusApproved);
+                    _unitOfWork.Save();
+                }
+            }
+            List<ShoppingCart> shoppingCarts = _unitOfWork.ShoppingCart
+                .GetAll(u => u.ApplicationUserId == orderHeader.ApplicationUserId).ToList();
+
+            // empty shoppingcart after payment
+            _unitOfWork.ShoppingCart.RemoveRange(shoppingCarts);
+            _unitOfWork.Save();
             return View(id);
         }
 
