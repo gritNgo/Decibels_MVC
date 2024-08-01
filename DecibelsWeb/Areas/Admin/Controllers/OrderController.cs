@@ -1,6 +1,7 @@
 ﻿using Decibels.DataAccess.Repository;
 using Decibels.DataAccess.Repository.IRepository;
 using Decibels.Models;
+using Decibels.Models.ViewModels;
 using Decibels.Utility;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +25,20 @@ namespace DecibelsWeb.Areas.Admin.Controllers
             return View();
         }
 
+        public IActionResult Details(int orderId)
+        {
+            // based on orderId populate VM
+            OrderVM orderVM = new()
+            {
+                OrderHeader = _unitOfWork.OrderHeader
+                .Get(u => u.Id == orderId, includeProperties: "ApplicationUser"),
+                OrderDetail = _unitOfWork.OrderDetail.GetAll(u=>u.OrderHeaderId==orderId, includeProperties:"Product")
+            };
+            return View(orderVM);
+        }
+
         #region API CALLS
+
         [HttpGet]
         public IActionResult GetAll(string status)
         {
@@ -48,9 +62,6 @@ namespace DecibelsWeb.Areas.Admin.Controllers
                 default:
                     break;
             }
-
-
-
             return Json(new { data = objOrderHeaders });
         }
 
