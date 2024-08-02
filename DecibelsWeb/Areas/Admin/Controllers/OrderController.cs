@@ -6,7 +6,9 @@ using Decibels.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration.UserSecrets;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace DecibelsWeb.Areas.Admin.Controllers
 {
@@ -75,7 +77,21 @@ namespace DecibelsWeb.Areas.Admin.Controllers
         public IActionResult GetAll(string status)
         {
             // change from List to IEnumerable for the filtering to work
-            IEnumerable<OrderHeader> objOrderHeaders = _unitOfWork.OrderHeader.GetAll(includeProperties: "ApplicationUser").ToList();
+            IEnumerable<OrderHeader> objOrderHeaders;
+
+            if (User.IsInRole(StaticDetails.Role_Admin) || User.IsInRole(StaticDetails.Role_Employee))
+            {
+                objOrderHeaders = _unitOfWork.OrderHeader.GetAll(includeProperties: "ApplicationUser").ToList();
+            }
+
+            else
+            {
+                var claimsIdentity = (ClaimsIdentity)User.Identity;
+                var userId= claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+                objOrderHeaders = _unitOfWork.OrderHeader
+                    .GetAll(u => u.ApplicationUserId == userId, includeProperties: "ApplicationUser");
+            }
 
             switch (status)
             {
