@@ -26,6 +26,7 @@ namespace DecibelsWeb.Areas.Identity.Pages.Account
         public async Task<IActionResult> OnPost(string returnUrl = null)
         {
             await _signInManager.SignOutAsync();
+            HttpContext.Session.Clear(); // clear cart on logout
             _logger.LogInformation("User logged out.");
             if (returnUrl != null)
             {
