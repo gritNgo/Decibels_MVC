@@ -1,5 +1,6 @@
 using Decibels.DataAccess.Repository.IRepository;
 using Decibels.Models;
+using Decibels.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -55,15 +56,20 @@ namespace DecibelsWeb.Areas.Customer.Controllers
                 // shopping cart exists
                 cartFromDb.Quantity += shoppingCart.Quantity;
                 _unitOfWork.ShoppingCart.Update(cartFromDb);
+                _unitOfWork.Save();
+
             }
             else
             {
                 // add cart record
                 _unitOfWork.ShoppingCart.Add(shoppingCart);
+            _unitOfWork.Save();
+                // update cart quantity and get all items 
+                HttpContext.Session.SetInt32(StaticDetails.SessionCart,
+                    _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId).Count());
             }
             TempData["success"] = "Cart updated successfully";
 
-            _unitOfWork.Save();
 
             return RedirectToAction(nameof(Index));
         }
