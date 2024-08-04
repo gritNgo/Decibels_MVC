@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace DecibelsWeb.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    //[Authorize(Roles = StaticDetails.Role_Admin)]
+    [Authorize(Roles = StaticDetails.Role_Admin)]
     public class ProductController : Controller
     {
         // UnitOfWork internally creates an object/implementation of ProductRepository
