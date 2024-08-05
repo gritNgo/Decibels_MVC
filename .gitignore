@@ -13,10 +13,6 @@
 # Exclude appsettings.json
 appsettings.json
 
-# Exclude launchSettings.json
-DecibelsWeb\Properties\launchSettings.json
-
-
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -369,4 +365,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Exclude launchSettings.json
 /DecibelsWeb/Properties/launchSettings.json
