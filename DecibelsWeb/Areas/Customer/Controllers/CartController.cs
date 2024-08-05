@@ -199,7 +199,7 @@ namespace DecibelsWeb.Areas.Customer.Controllers
                     _unitOfWork.OrderHeader.UpdateStatus(id, StaticDetails.StatusApproved, StaticDetails.PaymentStatusApproved);
                     _unitOfWork.Save();
                 }
-                // Only one session in the application, else clear based on key name
+                // Only one session in the application, so no need to clear based on a key name
                 HttpContext.Session.Clear();
             }
             List<ShoppingCart> shoppingCarts = _unitOfWork.ShoppingCart
