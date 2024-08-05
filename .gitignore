@@ -14,7 +14,7 @@
 appsettings.json
 
 # Exclude launchSettings.json
-launchSettings.json
+DecibelsWeb\Properties\launchSettings.json
 
 
 
@@ -369,3 +369,4 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/DecibelsWeb/Properties/launchSettings.json
