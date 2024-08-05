@@ -216,7 +216,16 @@ namespace DecibelsWeb.Areas.Identity.Pages.Account
                     }
                     else
                     {
+                        if (User.IsInRole(StaticDetails.Role_Admin))
+                        {
+                            TempData["success"] = "New User Created Successfully";
+                        }
+                        else
+                        {
+                            // admin creating user
                         await _signInManager.SignInAsync(user, isPersistent: false);
+                            
+                        }
                         return LocalRedirect(returnUrl);
                     }
                 }

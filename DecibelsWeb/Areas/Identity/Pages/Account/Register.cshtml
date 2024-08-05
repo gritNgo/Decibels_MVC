@@ -22,7 +22,7 @@
     </div>
     <div class="card-body">
         <div class="row">
-            <div class="col-md-12 pt-4 ">
+            <div class="col-md-12 pt-4 pb-2">
                 <section>
                 <form id="registerForm" class="row" asp-route-returnUrl="@Model.ReturnUrl" method="post">
                         @if (!User.IsInRole(StaticDetails.Role_Admin))
@@ -99,6 +99,8 @@
                 </form>
                 </section>
             </div>
+            @if (!User.IsInRole(StaticDetails.Role_Admin))
+            {
             <div class="col-md-12 p-3 text-center">
                 <section>
                     <p class="divider-text d-flex pt-3">or</p>
@@ -130,6 +132,7 @@
                     }
                 </section>
             </div>
+        }
         </div>
 
     </div>
