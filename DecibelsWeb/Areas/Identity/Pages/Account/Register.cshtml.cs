@@ -129,16 +129,6 @@ namespace DecibelsWeb.Areas.Identity.Pages.Account
 
         public async Task OnGetAsync(string returnUrl = null)
         {
-            // using 'GetAwaiter().GetResult()' instead of 'await' in order to get the result of the task
-            if (!_roleManager.RoleExistsAsync(StaticDetails.Role_Customer).GetAwaiter().GetResult())
-            {
-                // No need for 'SaveChanges' as CreateAsync takes care of that
-                _roleManager.CreateAsync(new IdentityRole(StaticDetails.Role_Customer)).GetAwaiter().GetResult();
-                _roleManager.CreateAsync(new IdentityRole(StaticDetails.Role_Employee)).GetAwaiter().GetResult();
-                _roleManager.CreateAsync(new IdentityRole(StaticDetails.Role_Admin)).GetAwaiter().GetResult();
-                _roleManager.CreateAsync(new IdentityRole(StaticDetails.Role_Company)).GetAwaiter().GetResult();
-            }
-
             Input = new()
             {
                 // Select a Role name and add that to the SelectListItem's fields (No need for unitOfWork as this is an Identity transaction manager.)

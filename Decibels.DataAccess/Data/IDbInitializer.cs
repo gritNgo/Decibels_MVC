@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Decibels.DataAccess.Data
 {
+    // class responsible for creating Admin and user Roles
     public interface IDbInitializer 
     {
-        // responsible for creating Admin and user Roles
         void Initialize();
     }
 }
