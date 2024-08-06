@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace Decibels.DataAccess.DbInitializer
 {
+    // class responsible for creating Admin and user Roles
     public class DbInitializer : IDbInitializer
     {
         private readonly ApplicationDbContext _db;
@@ -19,12 +20,12 @@ namespace Decibels.DataAccess.DbInitializer
         private readonly RoleManager<IdentityRole> _roleManager;
 
         public DbInitializer(
-            ApplicationDbContext db, 
-            UserManager<IdentityUser> userManager, 
+            ApplicationDbContext db,
+            UserManager<IdentityUser> userManager,
             RoleManager<IdentityRole> roleManager)
         {
             _db = db;
-            _userManager = userManager; 
+            _userManager = userManager;
             _roleManager = roleManager;
         }
 
@@ -55,26 +56,29 @@ namespace Decibels.DataAccess.DbInitializer
                 _roleManager.CreateAsync(new IdentityRole(StaticDetails.Role_Admin)).GetAwaiter().GetResult();
                 _roleManager.CreateAsync(new IdentityRole(StaticDetails.Role_Company)).GetAwaiter().GetResult();
 
-            // if there are no Roles, create admin user
-            _userManager.CreateAsync(new ApplicationUser
-            {
-                UserName = "dustspeck00@gmail.com",
-                Email = "dustspeck00@gmail.com",
-                Name= "Fiorenso Fernando",
-                PhoneNumber = "1231231230",
-                Street = "123 my street",
-                State = "UT",
-                PostalCode = "96024",
-                City= "FioLand",
-            }, "Admin123!").GetAwaiter().GetResult();
+                var adminEmail = Environment.GetEnvironmentVariable("ADMIN_EMAIL");
+                var adminPassword = Environment.GetEnvironmentVariable("ADMIN_PASSWORD");
 
-            // once it's created, retrieve by email from db 
-            ApplicationUser user = _db.ApplicationUsers.FirstOrDefault(u=>u.Email == "dustspeck000@gmail.com");
+                // if there are no Roles, create admin user
+                _userManager.CreateAsync(new ApplicationUser
+                {
+                    UserName = adminEmail,
+                    Email = adminEmail,
+                    Name = "Fiorenso Fernando",
+                    PhoneNumber = "1231231230",
+                    Street = "123 my street",
+                    State = "UT",
+                    PostalCode = "96024",
+                    City = "FioLand",
+                }, adminPassword).GetAwaiter().GetResult();
 
-            _userManager.AddToRoleAsync(user, StaticDetails.Role_Admin).GetAwaiter().GetResult();
+                // once it's created, retrieve by email from db 
+                ApplicationUser user = _db.ApplicationUsers.FirstOrDefault(u => u.Email == adminEmail);
+
+                _userManager.AddToRoleAsync(user, StaticDetails.Role_Admin).GetAwaiter().GetResult();
             }
             return;
         }
-        
+
     }
 }

@@ -44,7 +44,7 @@ namespace DecibelsWeb.Areas.Identity.Pages.Account
             IUserStore<IdentityUser> userStore,
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender, 
+            IEmailSender emailSender,
             IUnitOfWork unitOfWork)
         {
             _roleManager = roleManager;
@@ -213,8 +213,8 @@ namespace DecibelsWeb.Areas.Identity.Pages.Account
                         else
                         {
                             // admin creating user
-                        await _signInManager.SignInAsync(user, isPersistent: false);
-                            
+                            await _signInManager.SignInAsync(user, isPersistent: false);
+
                         }
                         return LocalRedirect(returnUrl);
                     }

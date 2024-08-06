@@ -34,7 +34,7 @@ builder.Services.ConfigureApplicationCookie(options => {
     options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
 });
 
-builder.Services.AddAuthentication().AddFacebook(options=> {
+builder.Services.AddAuthentication().AddFacebook(options => {
     options.AppId = Environment.GetEnvironmentVariable("FB_APP_ID");
     options.AppSecret = Environment.GetEnvironmentVariable("FB_APP_SECRET");
 });
@@ -86,7 +86,7 @@ void SeedDatabase()
 {
     using (var scope = app.Services.CreateScope())
     {
-        var dbInitializer =  scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+        var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
         dbInitializer.Initialize();
     }
 }
