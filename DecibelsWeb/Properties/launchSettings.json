@@ -1,0 +1,42 @@
+{
+  "profiles": {
+    "http": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "dotnetRunMessages": true,
+      "applicationUrl": "http://localhost:5135"
+    },
+    "https": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "FB_APP_ID": "866082252111647",
+        "FB_APP_SECRET": "1fb194a31882a20c76445678152e1920",
+        "ADMIN_EMAIL": "admin123@gmail.com",
+        "ADMIN_PASSWORD": "Admin123!"
+      },
+      "dotnetRunMessages": true,
+      "applicationUrl": "https://localhost:7267;http://localhost:5135"
+    },
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  },
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:58615",
+      "sslPort": 44383
+    }
+  }
+}
