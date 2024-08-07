@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy ASP.Net Core app to Azure Web App - decibels-shop
+name: Build and deploy ASP.Net Core app to Azure Web App - decibels-mvc
 
 on:
   push:
@@ -51,15 +51,15 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_064E10D2317540D89C37A39572D348AE }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_3D3AC1EF9E29431F8F1B3C0AE8001907 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_194607762592462495737EC97EC3D4FD }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_10D4A02F48794D5F8F26A620D09998BA }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_A7002D2C1E304DB59BD90A3D6FB874D5 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_42CA5B322EDB4BD58918A69DE87FB22D }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'decibels-shop'
+          app-name: 'decibels-mvc'
           slot-name: 'Production'
           package: .
           
