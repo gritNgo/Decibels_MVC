@@ -15,8 +15,8 @@ namespace Decibels.Models
         [Key]
         public int Id { get; set; }
         [Required]
-        public string Name { get; set; }
-        public string Description { get; set; }
+        public string? Name { get; set; }
+        public string? Description { get; set; }
         [Required]
         [Column(TypeName = "decimal(8,2)")]
         public decimal Price { get; set; }
@@ -25,10 +25,10 @@ namespace Decibels.Models
 
         [ForeignKey("CategoryId")]
         [ValidateNever]
-        public Category Category { get; set; } 
+        public Category? Category { get; set; } 
 
         [ValidateNever]
-        public string ImageUrl { get; set; }
+        public string? ImageUrl { get; set; }
 
     }
 }
