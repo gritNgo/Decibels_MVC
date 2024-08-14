@@ -70,7 +70,7 @@ namespace Decibels.DataAccess.DbInitializer
                 }, "Admin123!").GetAwaiter().GetResult();
 
                 // once it's created, retrieve by email from db 
-                ApplicationUser user = _db.ApplicationUsers.FirstOrDefault(u => u.Email == adminEmail);
+                ApplicationUser user = _db.ApplicationUsers.FirstOrDefault(u => u.Email == "admin123@gmail.com");
 
                 _userManager.AddToRoleAsync(user, StaticDetails.Role_Admin).GetAwaiter().GetResult();
             }
