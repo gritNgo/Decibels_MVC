@@ -56,21 +56,18 @@ namespace Decibels.DataAccess.DbInitializer
                 _roleManager.CreateAsync(new IdentityRole(StaticDetails.Role_Admin)).GetAwaiter().GetResult();
                 _roleManager.CreateAsync(new IdentityRole(StaticDetails.Role_Company)).GetAwaiter().GetResult();
 
-                var adminEmail = Environment.GetEnvironmentVariable("ADMIN_EMAIL");
-                var adminPassword = Environment.GetEnvironmentVariable("ADMIN_PASSWORD");
-
                 // if there are no Roles, create admin user
                 _userManager.CreateAsync(new ApplicationUser
                 {
-                    UserName = adminEmail,
-                    Email = adminEmail,
+                    UserName = "admin123@gmail.com",
+                    Email = "admin123@gmail.com",
                     Name = "Fiorenso Fernando",
                     PhoneNumber = "1231231230",
                     Street = "123 my street",
                     State = "UT",
                     PostalCode = "96024",
                     City = "FioLand",
-                }, adminPassword).GetAwaiter().GetResult();
+                }, "Admin123!").GetAwaiter().GetResult();
 
                 // once it's created, retrieve by email from db 
                 ApplicationUser user = _db.ApplicationUsers.FirstOrDefault(u => u.Email == adminEmail);

@@ -13,11 +13,7 @@
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "FB_APP_ID": "866082252111647",
-        "FB_APP_SECRET": "1fb194a31882a20c76445678152e1920",
-        "ADMIN_EMAIL": "admin123@gmail.com",
-        "ADMIN_PASSWORD": "Admin123!"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": true,
       "applicationUrl": "https://localhost:7267;http://localhost:5135"
