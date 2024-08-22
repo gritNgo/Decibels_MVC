@@ -51,9 +51,9 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_D30FC972E1134C198997A822B9C47A9B }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_25F5F9949FB3454D97D5382C6CD3AC54 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_EB4EF7B3ADFE4B0EB5CCE9B447DE0E4B }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_EB95BA9A922E43FDA316786AB6ED98CD }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_5DB7012B10A2426AB034E8FA7FB56C26 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_38E4EF2F09E24BF3B88941FD1666CB98 }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
@@ -62,3 +62,4 @@ jobs:
           app-name: 'decibels-music'
           slot-name: 'Production'
           package: .
+          
