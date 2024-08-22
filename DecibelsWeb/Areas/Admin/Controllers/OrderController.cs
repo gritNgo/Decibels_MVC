@@ -144,7 +144,7 @@ namespace DecibelsWeb.Areas.Admin.Controllers
                 .GetAll(u => u.OrderHeaderId == OrderVM.OrderHeader.Id, includeProperties: "Product");
 
             // stripe logic
-            var domain = "https://localhost:7267/";
+            var domain = Request.Scheme + "://" + Request.Host.Value + "/";     // this gets the domain dynamically for localhost or website
             var options = new Stripe.Checkout.SessionCreateOptions
             {
                 SuccessUrl = domain + $"admin/order/PaymentConfirmation?orderHeaderId={OrderVM.OrderHeader.Id}",

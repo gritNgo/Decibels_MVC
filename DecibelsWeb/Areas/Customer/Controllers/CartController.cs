@@ -139,7 +139,7 @@ namespace DecibelsWeb.Areas.Customer.Controllers
             {
                 // regular customer account so need to get payment
                 // stripe logic
-                var domain = "https://localhost:7267/";
+                var domain = Request.Scheme + "://" + Request.Host.Value + "/";     // this gets the domain dynamically for localhost or website
                 var options = new Stripe.Checkout.SessionCreateOptions
                 {
                     SuccessUrl = domain + $"customer/cart/OrderConfirmation?id={ShoppingCartVM.OrderHeader.Id}",
