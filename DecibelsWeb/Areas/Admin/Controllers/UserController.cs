@@ -30,12 +30,12 @@ namespace DecibelsWeb.Areas.Admin.Controllers
 
 
         #region API CALLS
+        // Get role of users
         [HttpGet]
         public IActionResult GetAll()
         {
             List<ApplicationUser> objUserList = _db.ApplicationUsers.Include(u => u.Company).ToList();
 
-            // Get role of users
             // Role of AspNetUsers table is inside AspNetRoles table and the 2 are joined and mapped by AspNetUserRoles table 
             // access built-on Identity tables with dbContext by removing the 'AspNet' prefix before the table name i.e. AspNetUserRoles > _db.UserRoles
             var userRoles = _db.UserRoles.ToList();
@@ -60,11 +60,29 @@ namespace DecibelsWeb.Areas.Admin.Controllers
             return Json(new { data = objUserList });
         }
 
-        [HttpDelete]
-        public IActionResult Delete(int? id)
+        // Lock any account until a future date
+        [HttpPost]
+        public IActionResult LockUnlock([FromBody]string id)
         {
+            var objFromDb = _db.ApplicationUsers.FirstOrDefault(u=> u.Id == id);
+            if (objFromDb == null)
+            {
+                return Json(new { success = false, message = "Error while Locking/Unlocking"});
+            }
 
-            return Json(new { success = true, message = "Delete Successful" });
+            if (objFromDb.LockoutEnd != null && objFromDb.LockoutEnd > DateTime.Now)
+            {
+                // user is locked and needs to be unlocked
+                objFromDb.LockoutEnd = DateTime.Now;
+            }
+
+            else
+            {
+                objFromDb.LockoutEnd = DateTime.Now.AddYears(100);
+            }
+            _db.SaveChanges();
+
+            return Json(new { success = true, message = "Operation Successful" });
         }
 
         #endregion
