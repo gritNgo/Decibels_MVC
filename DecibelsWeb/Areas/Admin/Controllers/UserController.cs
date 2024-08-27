@@ -35,11 +35,25 @@ namespace DecibelsWeb.Areas.Admin.Controllers
         {
             List<ApplicationUser> objUserList = _db.ApplicationUsers.Include(u => u.Company).ToList();
 
+            // Get role of users
+            // Role of AspNetUsers table is inside AspNetRoles table and the 2 are joined and mapped by AspNetUserRoles table 
+            // access built-on Identity tables with dbContext by removing the 'AspNet' prefix before the table name i.e. AspNetUserRoles > _db.UserRoles
+            var userRoles = _db.UserRoles.ToList();
+            var roles = _db.Roles.ToList();
+
             foreach (var user in objUserList)
             {
+                // based on user's roleId from the UserRoles table where both UserId and RoleId of users are mapped, find the role name from Roles table
+                var roleId = userRoles.FirstOrDefault(u => u.UserId == user.Id).RoleId;
+                // this role needs to be passed into the data, so add a [NotMapped] property in the ApplicationUser model
+                user.Role = roles.FirstOrDefault(u=>u.Id == roleId).Name;  
+
                 if (user.Company == null)
                 {
-                    user.Company = new() { Name = ""};
+                    user.Company = new Company()
+                    {
+                        Name = ""
+                    };
                 }
             }
 

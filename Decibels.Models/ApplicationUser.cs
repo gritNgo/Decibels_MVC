@@ -24,7 +24,10 @@ namespace Decibels.Models
         public int? CompanyId { get; set; } // nullable as a user can be a customer
         [ForeignKey("CompanyId")]
         [ValidateNever] // as this won't be populated when creating a user
-        public Company? Company { get; set; }
+        public Company? Company { get; set; } // make nullable to display users without Company role in User Management
+
+        [NotMapped]
+        public string Role { get; set; }
 
     }
 }
