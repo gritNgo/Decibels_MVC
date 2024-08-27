@@ -33,7 +33,7 @@ namespace Decibels.DataAccess.DbInitializer
         public void Initialize()
         {
             // if migrations are not applied
-            try
+            try 
             {
                 if (_db.Database.GetPendingMigrations().Count() > 0)
                 {
