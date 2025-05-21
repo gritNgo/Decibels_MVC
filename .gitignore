@@ -366,5 +366,4 @@ FodyWeavers.xsd
 # Ignore specific environment-specific appsettings files
 appsettings.*.json
 
-# !appsettings.json # Uncomment if you want to track appsettings.json for defaults
 

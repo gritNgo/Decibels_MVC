@@ -52,8 +52,8 @@ namespace Decibels.DataAccess.DbInitializer
                 throw;
             }
 
-            string? adminEmail = _configuration["AdminUser:Email"]; 
-            string? adminPassword = _configuration["AdminUser:Password"];
+            string adminEmail = _configuration["AdminUser:Email"]; 
+            string adminPassword = _configuration["AdminUser:Password"];
 
             if (string.IsNullOrEmpty(adminEmail) || string.IsNullOrEmpty(adminPassword))
             {
