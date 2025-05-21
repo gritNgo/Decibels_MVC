@@ -4,6 +4,7 @@ using Decibels.Models;
 using Decibels.Utility;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,15 +19,18 @@ namespace Decibels.DataAccess.DbInitializer
         private readonly ApplicationDbContext _db;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IConfiguration _configuration; // Added to use Azure App Service secrets instead of hard coding sensitive data
 
         public DbInitializer(
             ApplicationDbContext db,
             UserManager<IdentityUser> userManager,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager, 
+            IConfiguration configuration)
         {
             _db = db;
             _userManager = userManager;
             _roleManager = roleManager;
+            _configuration = configuration;
         }
 
         // creates admin and other Roles, and pushes pending migrations
@@ -42,8 +46,20 @@ namespace Decibels.DataAccess.DbInitializer
             }
             catch (Exception ex)
             {
-
+                // Add Serilog
+                Console.WriteLine($"CRITICAL ERROR: Error applying database migrations: {ex.Message}");
+                // Re-throw the exception as migration failure is usually a fatal startup error
                 throw;
+            }
+
+            string? adminEmail = _configuration["AdminUser:Email"]; 
+            string? adminPassword = _configuration["AdminUser:Password"];
+
+            if (string.IsNullOrEmpty(adminEmail) || string.IsNullOrEmpty(adminPassword))
+            {
+                // Log an error and throw if essential admin details are missing
+                Console.WriteLine("CRITICAL ERROR: Admin user email or password not found in configuration.");
+                throw new InvalidOperationException("Admin user configuration is missing.");
             }
 
             // create roles if they are not created
@@ -59,18 +75,18 @@ namespace Decibels.DataAccess.DbInitializer
                 // if there are no Roles, create admin user
                 _userManager.CreateAsync(new ApplicationUser
                 {
-                    UserName = "admin123@gmail.com",
-                    Email = "admin123@gmail.com",
-                    Name = "Fiorenso Fernando",
-                    PhoneNumber = "1231231230",
-                    Street = "123 my street",
+                    UserName = adminEmail,
+                    Email = adminEmail,
+                    Name = "Admin User (Configured)",
+                    PhoneNumber = "1112223333",
+                    Street = "Configured Street",
                     State = "UT",
-                    PostalCode = "96024",
-                    City = "FioLand",
-                }, "Admin123!").GetAwaiter().GetResult();
+                    PostalCode = "00000",
+                    City = "Configured City",
+                }, adminPassword).GetAwaiter().GetResult();
 
                 // once it's created, retrieve by email from db 
-                ApplicationUser user = _db.ApplicationUsers.FirstOrDefault(u => u.Email == "admin123@gmail.com");
+                ApplicationUser user = _db.ApplicationUsers.FirstOrDefault(u => u.Email == adminEmail);
 
                 _userManager.AddToRoleAsync(user, StaticDetails.Role_Admin).GetAwaiter().GetResult();
             }
