@@ -72,10 +72,11 @@
             </div>
         </nav>
     </header>
+    @RenderSection("FullWidthBanner", required: false)
+
     <div class="container">
         <main role="main" class="pb-3">
-            <partial name="_Notification" />
-            @RenderBody()
+            @RenderBody() 
         </main>
     </div>
 
