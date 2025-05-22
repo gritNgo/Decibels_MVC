@@ -4,47 +4,52 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="position-relative overflow-hidden" style="height: 50vh; background-color: #343a40;">
-    <img src="~/images/banner.png"
-         class="position-absolute w-100 h-100"
-         style="object-fit: cover; object-position: center;"
-         alt="Welcome to Decibels Banner">
-</div>
+@*  This content will be rendered into the "FullWidthBanner" section in _Layout.cshtml  *@
+@* Keep w-100 for full width, d-block for proper spacing *@
+@section FullWidthBanner {
+    <div class="container-fluid p-0">
+        <div class="position-relative overflow-hidden" style="background-color: #343a40;">
+            <img src="~/images/banner.png"
+                 class="w-100 d-block" 
+                 style="height: auto; object-fit: contain; object-position: center;" 
+                 alt="Welcome to Decibels Banner">
+        </div>
+    </div>
+}
+
+
 <div class="container text-center">
+
     <h2 class="display-6 fw-bold mt-5 mb-3">Not your average-Joe musical instruments store!</h2>
     <p class="lead text-muted mb-5">
         Decibels is a real music business started by musicians for musicians, and is home to instruments used by your favourite Rockers!
     </p>
 
     <div class="row">
-        <div class="col-md-3 col-sm-6">
-
-            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="bi bi-chat-left-text" viewBox="0 0 16 16">
+        <div class="col-md-3 col-sm-6 mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="bi bi-chat-left-text mb-3" viewBox="0 0 16 16">
                 <path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
                 <path d="M3 3.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5M3 6a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9A.5.5 0 0 1 3 6m0 2.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5" />
             </svg>
             <h5 class="fw-bold">Assistance</h5>
             <p class="text-muted">A pre and post sales support at your complete disposal. If there's a problem, you're sure we'll solve it.</p>
         </div>
-        <div class="col-md-3 col-sm-6">
-
-            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="bi bi-wallet2" viewBox="0 0 16 16">
+        <div class="col-md-3 col-sm-6 mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="bi bi-wallet2 mb-3" viewBox="0 0 16 16">
                 <path d="M12.136.326A1.5 1.5 0 0 1 14 1.78V3h.5A1.5 1.5 0 0 1 16 4.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 13.5v-9a1.5 1.5 0 0 1 1.432-1.499zM5.562 3H13V1.78a.5.5 0 0 0-.621-.484zM1.5 4a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5z" />
             </svg>
             <h5 class="fw-bold">Payment</h5>
             <p class="text-muted">You can pay your order as you like, choose between PayPal, Scalapay, Klarna, credit card or bank transfer.</p>
         </div>
-        <div class="col-md-3 col-sm-6">
-
-            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="bi bi-box2" viewBox="0 0 16 16">
+        <div class="col-md-3 col-sm-6 mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="bi bi-box2 mb-3" viewBox="0 0 16 16">
                 <path d="M2.95.4a1 1 0 0 1 .8-.4h8.5a1 1 0 0 1 .8.4l2.85 3.8a.5.5 0 0 1 .1.3V15a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V4.5a.5.5 0 0 1 .1-.3zM7.5 1H3.75L1.5 4h6zm1 0v3h6l-2.25-3zM15 5H1v10h14z" />
             </svg>
             <h5 class="fw-bold">Shipping cost</h5>
             <p class="text-muted">Although we can't offer free shipping, we do our best to keep them at the lowest possible, while maintaining excellent service!</p>
         </div>
-        <div class="col-md-3 col-sm-6">
-
-            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="bi bi-truck" viewBox="0 0 16 16">
+        <div class="col-md-3 col-sm-6 mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="bi bi-truck mb-3" viewBox="0 0 16 16">
                 <path d="M0 3.5A1.5 1.5 0 0 1 1.5 2h9A1.5 1.5 0 0 1 12 3.5V5h1.02a1.5 1.5 0 0 1 1.17.563l1.481 1.85a1.5 1.5 0 0 1 .329.938V10.5a1.5 1.5 0 0 1-1.5 1.5H14a2 2 0 1 1-4 0H5a2 2 0 1 1-3.998-.085A1.5 1.5 0 0 1 0 10.5zm1.294 7.456A2 2 0 0 1 4.732 11h5.536a2 2 0 0 1 .732-.732V3.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 .294.456M12 10a2 2 0 0 1 1.732 1h.768a.5.5 0 0 0 .5-.5V8.35a.5.5 0 0 0-.11-.312l-1.48-1.85A.5.5 0 0 0 13.02 6H12zm-9 1a1 1 0 1 0 0 2 1 1 0 0 0 0-2m9 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2" />
             </svg>
             <h5 class="fw-bold">Shipping</h5>
@@ -54,6 +59,7 @@
 </div>
 
 <div class="container py-4">
+    @* grid container *@
     <h2 class="display-6 fw-bold mb-3">Featured Products</h2>
     <div class="row pt-3 pb-3">
         @foreach (var product in Model)
