@@ -78,7 +78,7 @@ jobs:
     if: github.ref == 'refs/heads/develop'
     environment:
       name: 'Staging' # You can define this environment in GitHub settings if you want to add protection rules later
-      url: https://decibels-music-staging.azurewebsites.net/ # <--- IMPORTANT: REPLACE THIS with actual Staging slot URL
+      url: 'https://decibels-music-staging.azurewebsites.net/' # <--- IMPORTANT: REPLACE THIS with actual Staging slot URL
     permissions:
       id-token: write # Required for Azure login
       contents: read # Required for actions/checkout
