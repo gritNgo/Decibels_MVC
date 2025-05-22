@@ -7,14 +7,14 @@ on:
   push:
     branches:
       - main
-      - develop # <--- ADDED: This line ensures the workflow triggers on pushes to 'develop'
-  workflow_dispatch: # Allows manual triggering from GitHub Actions tab
+      - develop
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: windows-latest
     permissions:
-      contents: read # This is required for actions/checkout
+      contents: read
 
     steps:
       - uses: actions/checkout@v4
@@ -36,18 +36,16 @@ jobs:
           name: .net-app
           path: ${{env.GITHUB_WORKSPACE}}\myapp
 
-  # Job for deploying to Production environment (triggered only by pushes to 'main')
   deploy-production:
     runs-on: windows-latest
     needs: build
-    # This condition is crucial: only run this job if the branch is 'main'
     if: github.ref == 'refs/heads/main'
     environment:
-      name: 'Production' # This references an environment configured in GitHub (optional but good practice)
+      name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write # Required for Azure login
-      contents: read # Required for actions/checkout
+      id-token: write # This is crucial for workload identity
+      contents: read
 
     steps:
       - name: Download artifact from build job
@@ -58,30 +56,31 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_74454F2B185242C1B0DE4318FF8D20FC }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_AD3B7D3C65224EFCAA2A577449CEB838 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_40BEB970A7694C4CB7C7EDFF5FC80941 }}
+          # --- UPDATED SECRETS HERE ---
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          # --- END UPDATED SECRETS ---
 
       - name: Deploy to Azure Web App (Production Slot)
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'decibels-music'
-          slot-name: 'Production' # Targets the main production slot
+          slot-name: 'Production'
           package: .
 
-  # NEW JOB: Deploy to Staging environment (triggered only by pushes to 'develop')
   deploy-staging:
     runs-on: windows-latest
     needs: build
-    # This condition is crucial: only run this job if the branch is 'develop'
     if: github.ref == 'refs/heads/develop'
     environment:
-      name: 'Staging' # You can define this environment in GitHub settings if you want to add protection rules later
-      url: 'https://decibels-music-staging.azurewebsites.net/' # <--- IMPORTANT: REPLACE THIS with actual Staging slot URL
+      name: 'Staging'
+      url: 'https://decibels-music-staging.azurewebsites.net/'
+
     permissions:
-      id-token: write # Required for Azure login
-      contents: read # Required for actions/checkout
+      id-token: write # This is crucial for workload identity
+      contents: read
 
     steps:
       - name: Download artifact from build job
@@ -92,14 +91,16 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_74454F2B185242C1B0DE4318FF8D20FC }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_AD3B7D3C65224EFCAA2A577449CEB838 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_40BEB970A7694C4CB7C7EDFF5FC80941 }}
+          # --- UPDATED SECRETS HERE ---
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          # --- END UPDATED SECRETS ---
 
       - name: Deploy to Azure Web App (Staging Slot)
         id: deploy-to-staging-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'decibels-music'
-          slot-name: 'Staging' # Targets your newly created Staging slot
+          slot-name: 'Staging'
           package: .
