@@ -6,22 +6,19 @@ $(document).ready(function () {
 
 function loadDataTable() {
     dataTable = $('#tblData').DataTable({
-        "ajax": { url: '/admin/company/getall' }, // specify url in case of more properties in the future in the ajax call
+        "ajax": { url: '/admin/company/getall' },
         "columns": [
             { data: 'name', "width": "15%" },
             { data: 'phoneNumber', "width": "15%" },
             { data: 'street', "width": "15%" },
             { data: 'city', "width": "15%" },
             { data: 'state', "width": "15%" },
-            { data: 'postalCode', "width": "15%" }, 
+            { data: 'postalCode', "width": "15%" },
             {
                 data: 'id',
                 "render": function (data) {
-                    return `<div class="w-75 btn-group" role="group">
-                    <a href="/admin/company/upsert?id=${data}" class="btn btn-primary mx-2">
-                                <i class="bi bi-pencil-square"></i> Edit</a>
-                    <a onClick=Delete("/admin/company/delete/${data}") class="btn btn-danger mx-2">
-                                <i class="bi bi-trash-fill"></i> Delete</a>
+                    return `<div class="w-100 btn-group gap-2" role="group">  <a href="/admin/company/upsert?id=${data}" class="btn btn-primary text-dark"> <i class="bi bi-pencil-square"></i> Edit</a>
+                        <a onClick=Delete("/admin/company/delete/${data}") class="btn btn-danger text-dark"> <i class="bi bi-trash-fill"></i> Delete</a>
                     </div>`
                 },
                 "width": "15%"
@@ -29,7 +26,6 @@ function loadDataTable() {
         ]
     });
 }
-
 function Delete(url) {
     Swal.fire({
         title: "Are you sure?",

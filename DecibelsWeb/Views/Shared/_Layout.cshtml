@@ -8,20 +8,19 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Decibels</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="~/css/bootswatch/journal/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/DecibelsWeb.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
-
     <link rel="stylesheet" href="//cdn.datatables.net/2.1.0/css/dataTables.dataTables.min.css" />
+    <link rel="stylesheet" href="~/DecibelsWeb.styles.css" asp-append-version="true" />
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg bg-light border-bottom box-shadow mb-3" >
+        <nav class="navbar navbar-expand-lg bg-primary">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                    <img src="~/images/log0.png" style="width:180px" />
+                    <img src="~/images/logo.png" style="width:180px" />
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -74,15 +73,15 @@
         </nav>
     </header>
     <div class="container">
-        <main role="main" class="pb-5">
+        <main role="main" class="pb-3">
             <partial name="_Notification" />
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer bg-light text-muted">
+    <footer class="border-top footer bg-primary text-muted">
         <div class="text-center">
-            &copy; 2024 - Decibels <i class="bi bi-music-note-beamed"></i>
+            &copy; 2025 - Decibels 𝄞
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -91,9 +90,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="//cdn.datatables.net/2.1.0/js/dataTables.min.js" asp-append-version="true"></script>
     <script src="https://cdn.tiny.cloud/1/bkfaw5njm0fgxydtqajoet4y07dn24bdrfjt4tnqlny83of1/tinymce/7/tinymce.min.js" referrerpolicy="origin">
-        <script src="/lib/jquery/dist/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
-    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

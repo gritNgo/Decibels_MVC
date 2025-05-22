@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<Product>
 
-<div class="row pb-3">
+<div class="row pt-3 pb-3">
     @foreach (var product in Model)
     {
         <div class="col-lg-3 col-sm-6 mb-4 d-flex">
@@ -8,10 +8,10 @@
                 <img src="@product.ImageUrl" class="card-img-top" rounded />
                 <div class="card-body pb-0 d-flex flex-column">
                     <div class="pl-1">
-                        <p class="card-title h5 text-dark opacity-75 text-uppercase text-center">@product.Name</p>
+                        <p class="card-title h5 text-uppercase text-center">@product.Name</p>
                     </div>
                     <div class="pl-1 mt-auto">
-                        <p class="text-dark text-opacity-75 text-center mb-0">
+                        <p class="text-primary-emphasis text-center mb-0">
                             <span>@product.Price.ToString("c")</span>
                         </p>
                     </div>
@@ -20,7 +20,7 @@
                     <!-- No need to have an href to redirect to Details as Index and Details are in the same Area and have the same Controller-->
                     <a asp-action="Details"
                        asp-route-productId="@product.Id"
-                       class="btn btn-primary bg-gradient border-0 form-control">
+                       class="btn btn-primary bg-gradient text-dark border-0 form-control">
                         Details
                     </a>
                 </div>
