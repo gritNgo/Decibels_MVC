@@ -20,8 +20,6 @@ options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectio
 // inject keys in appsettings into properties inside StripeSettings for the controller
 builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
 
-
-
 // Binds Entity Framework with Identity NetUsers and NetRoles tables
 // .AddDefaultTokenProviders() required as during registration of user and assigning of role an email confirmation token is generated
 builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
