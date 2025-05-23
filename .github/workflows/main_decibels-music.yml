@@ -1,13 +1,15 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
-
 name: Build and deploy ASP.Net Core app to Azure Web App - decibels-music
-
 on:
   push:
     branches:
       - main
       - develop
+  pull_request: # <--- PR section
+    branches:
+      - main
+      - develop # <--- Branches PRs should trigger the workflow
   workflow_dispatch:
 
 jobs:
@@ -15,21 +17,16 @@ jobs:
     runs-on: windows-latest
     permissions:
       contents: read
-
     steps:
       - uses: actions/checkout@v4
-
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.x'
-
       - name: Build with dotnet
         run: dotnet build --configuration Release
-
       - name: dotnet publish
         run: dotnet publish -c Release -o "${{env.GITHUB_WORKSPACE}}\myapp"
-
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
@@ -46,13 +43,11 @@ jobs:
     permissions:
       id-token: write # This is crucial for workload identity
       contents: read
-
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: .net-app
-
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -61,7 +56,6 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           # --- END UPDATED SECRETS ---
-
       - name: Deploy to Azure Web App (Production Slot)
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
@@ -77,17 +71,14 @@ jobs:
     environment:
       name: 'Staging'
       url: 'https://decibels-music-staging.azurewebsites.net/'
-
     permissions:
       id-token: write # This is crucial for workload identity
       contents: read
-
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: .net-app
-
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -96,7 +87,6 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           # --- END UPDATED SECRETS ---
-
       - name: Deploy to Azure Web App (Staging Slot)
         id: deploy-to-staging-webapp
         uses: azure/webapps-deploy@v3
