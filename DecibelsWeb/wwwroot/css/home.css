@@ -1,0 +1,31 @@
+﻿/* Base size for icons on larger screens (e.g., desktop) */
+.info-icon-svg {
+    /*
+        The width="64" and height="64" in the HTML are direct attributes.
+        CSS properties will override them, but using !important ensures it.
+        We can also remove the width/height attributes from the SVGs in HTML
+        and control purely via CSS for better maintainability.
+        For now, let's override.
+        */
+    width: 64px; /* Default size as currently in HTML */
+    height: 64px;
+    margin-bottom: 1rem !important; /* Use Bootstrap's spacing scale for consistency, override mb-3 if needed */
+}
+
+@media (max-width: 575.98px) {
+    .info-icon-svg {
+        width: 40px !important; /* Smaller size for mobile, adjust as needed (e.g., 36px, 48px) */
+        height: 40px !important; /* Maintain aspect ratio */
+        margin-bottom: 0.5rem !important; /* Reduce margin to save vertical space */
+    }
+
+    /* Optional: Further adjust font sizes for mobile for better balance */
+    .container .row .col-sm-6 h5.fw-bold {
+        font-size: 1rem; /* Adjust heading size */
+    }
+
+    .container .row .col-sm-6 p.text-muted {
+        font-size: 0.85rem; /* Adjust paragraph text size */
+    }
+}
+
