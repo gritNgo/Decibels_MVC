@@ -1,0 +1,30 @@
+﻿
+@media (min-width: 576px) and (max-width: 992px) {
+    #quantityButtons .btn
+
+{
+    /* Reduce padding to make buttons smaller */
+    padding: 0.25rem 0.5rem; /* Equivalent to Bootstrap's .btn-sm or smaller */
+    font-size: 0.75rem; /* Smaller font size for icons/text inside */
+}
+
+/* adjust the trash button */
+.btn-danger.bg-gradient { 
+    padding: 0.25rem 0.5rem; /* Match the size of the quantity buttons */
+    font-size: 0.75rem;
+}
+
+/* If the space between +|- and trash is still tight, can reduce the margin */
+#quantityButtons.me-2 {
+    margin-right: 0.25rem !important; /* Reduce margin to make space */
+}
+
+}
+
+@media (min-width: 768px) and (max-width: 992px) {
+    #summaryButton {
+         /*Reduce padding to make button smaller*/ 
+        /*padding: 0.25rem 0.5rem !important;*/  /*Adjust these values as needed */
+        font-size: 0.8rem !important;  /*Adjust this value as needed */
+    }
+}
