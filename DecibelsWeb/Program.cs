@@ -7,6 +7,8 @@ using Decibels.Utility;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Stripe;
 using Decibels.DataAccess.DbInitializer;
+using Azure.Storage.Blobs;
+using DecibelsWeb.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +18,9 @@ builder.Services.AddRazorPages();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Registers the service for Azure Storage CRUD operations
+builder.Services.AddSingleton<IStorageService, AzureBlobStorageService>();
 
 // inject keys in appsettings into properties inside StripeSettings for the controller
 builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));

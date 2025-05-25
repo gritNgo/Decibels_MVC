@@ -1,11 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Decibels.DataAccess.Data;
+using Decibels.DataAccess.Data; 
 using Decibels.Models;
 using Decibels.DataAccess.Repository.IRepository;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Decibels.Models.ViewModels;
 using Decibels.Utility;
 using Microsoft.AspNetCore.Authorization;
+using DecibelsWeb.Services; 
+using System.Threading.Tasks; 
+using System.IO; 
 
 namespace DecibelsWeb.Areas.Admin.Controllers
 {
@@ -13,38 +16,32 @@ namespace DecibelsWeb.Areas.Admin.Controllers
     [Authorize(Roles = StaticDetails.Role_Admin)]
     public class ProductController : Controller
     {
-        // UnitOfWork internally creates an object/implementation of ProductRepository
         private readonly IUnitOfWork _unitOfWork;
-        // Provides information about the web hosting environment
-        private readonly IWebHostEnvironment _webHostEnvironment;
+        // private readonly IWebHostEnvironment _webHostEnvironment; // No longer needed for image storage
+        private readonly IStorageService _storageService;
+        private const string ImageContainerName = "product-images"; // Container name
 
-        public ProductController(IUnitOfWork unitOfWork, IWebHostEnvironment webhostEnvironment)
+        public ProductController(IUnitOfWork unitOfWork, IWebHostEnvironment webhostEnvironment, IStorageService storageService)
         {
             _unitOfWork = unitOfWork;
-            _webHostEnvironment = webhostEnvironment;
+            // _webHostEnvironment = webhostEnvironment; 
+            _storageService = storageService;
         }
 
         public IActionResult Index()
         {
-            // specify which object/repository being worked on to call methods
             List<Product> objProductList = _unitOfWork.Product.GetAll(includeProperties: "Category").ToList();
             return View(objProductList);
         }
 
         public IActionResult Upsert(int? id) // Update + Insert
         {
-            // Retrieve Categories and convert to SelectListItems by using EF Core PROJECTIONS 
             IEnumerable<SelectListItem> CategoryList = _unitOfWork.Category
                 .GetAll().Select(u => new SelectListItem
                 {
                     Text = u.Name,
                     Value = u.Id.ToString()
                 });
-
-            //using ViewBag as the model of this action is Product, not Category
-            //ViewBag.categoryList: key       CategoryList: value
-            //ViewBag.CategoryList = CategoryList;
-            // asp-items in Create View takes an IEnumerable of SelectListItem: ViewBag.categoryList
 
             ProductVM productVM = new()
             {
@@ -57,7 +54,6 @@ namespace DecibelsWeb.Areas.Admin.Controllers
                 // create
                 return View(productVM);
             }
-
             else
             {
                 // update
@@ -67,35 +63,43 @@ namespace DecibelsWeb.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Upsert(ProductVM productVM, IFormFile? file)
+        public async Task<IActionResult> Upsert(ProductVM productVM, IFormFile? file)
         {
             if (ModelState.IsValid)
             {
-                string wwwRootPath = _webHostEnvironment.WebRootPath;
+                // Retrieve the existing product if it's an update scenario to get the old ImageUrl
+                string oldImageUrl = null;
+                if (productVM.Product.Id != 0)
+                {
+                    var existingProduct = _unitOfWork.Product.Get(u => u.Id == productVM.Product.Id, tracked: false);
+                    if (existingProduct != null)
+                    {
+                        oldImageUrl = existingProduct.ImageUrl;
+                    }
+                }
+
                 if (file != null)
                 {
-                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-                    string productPath = Path.Combine(wwwRootPath, @"images\product");
-
-                    if (!string.IsNullOrEmpty(productVM.Product.ImageUrl))
+                    // Delete old image from blob storage if it exists
+                    if (!string.IsNullOrEmpty(oldImageUrl))
                     {
-                        // delete old image before updating
-                        var oldImagePath =
-                            Path.Combine(wwwRootPath, productVM.Product.ImageUrl.TrimStart('\\'));
-
-                        if (System.IO.File.Exists(oldImagePath))
-                        {
-                            System.IO.File.Delete(oldImagePath);
-                        }
+                        await _storageService.DeleteFileAsync(oldImageUrl, ImageContainerName);
                     }
 
-                    using (var fileStream = new FileStream(Path.Combine(productPath, fileName), FileMode.Create))
+                    // Upload the new image to blob storage
+                    // The "images/product" parameter adds a virtual folder structure inside the blob container.
+                    string newImageUrl = await _storageService.UploadFileAsync(file, ImageContainerName, "images/product");
+                    productVM.Product.ImageUrl = newImageUrl; // Store the full URL in the database
+                }
+                else
+                {
+                    // If no new file is uploaded, retain the existing ImageUrl for an update operation.
+                    // this prevents the image from being cleared on edit if no new image is selected.
+                    if (productVM.Product.Id != 0) // It's an update
                     {
-                        file.CopyTo(fileStream);
+                        productVM.Product.ImageUrl = oldImageUrl;
                     }
-
-                    //productVM.Product.ImageUrl = @"\images\product\" + fileName; ;
-                    productVM.Product.ImageUrl = "/images/product/" + fileName;
+                    // If it's a new product (Id == 0) and no file is provided, ImageUrl will remain null, which is fine.
                 }
 
                 if (productVM.Product.Id == 0)
@@ -107,22 +111,21 @@ namespace DecibelsWeb.Areas.Admin.Controllers
                     _unitOfWork.Product.Update(productVM.Product);
                 }
                 _unitOfWork.Save();
-                TempData["success"] = "Product created successfully";
+                TempData["success"] = "Product created/updated successfully";
                 return RedirectToAction("Index", "Product");
             }
             else
             {
                 productVM.CategoryList = _unitOfWork.Category
-                .GetAll().Select(u => new SelectListItem
-                {
-                    Text = u.Name,
-                    Value = u.Id.ToString()
-                });
+                    .GetAll().Select(u => new SelectListItem
+                    {
+                        Text = u.Name,
+                        Value = u.Id.ToString()
+                    });
                 return View(productVM);
             }
         }
 
-        #region API CALLS
         [HttpGet]
         public IActionResult GetAll()
         {
@@ -131,7 +134,7 @@ namespace DecibelsWeb.Areas.Admin.Controllers
         }
 
         [HttpDelete]
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id) 
         {
             var productToBeDeleted = _unitOfWork.Product.Get(u => u.Id == id);
             if (productToBeDeleted == null)
@@ -139,13 +142,10 @@ namespace DecibelsWeb.Areas.Admin.Controllers
                 return Json(new { success = false, message = "Error while deleting" });
             }
 
-            var oldImagePath =
-                            Path.Combine(_webHostEnvironment.WebRootPath, 
-                            productToBeDeleted.ImageUrl.TrimStart('\\'));
-
-            if (System.IO.File.Exists(oldImagePath))
+            // Delete image from blob storage
+            if (!string.IsNullOrEmpty(productToBeDeleted.ImageUrl))
             {
-                System.IO.File.Delete(oldImagePath);
+                await _storageService.DeleteFileAsync(productToBeDeleted.ImageUrl, ImageContainerName);
             }
 
             _unitOfWork.Product.Remove(productToBeDeleted);
@@ -153,8 +153,5 @@ namespace DecibelsWeb.Areas.Admin.Controllers
 
             return Json(new { success = true, message = "Delete Successful" });
         }
-
-        #endregion
-
     }
 }
