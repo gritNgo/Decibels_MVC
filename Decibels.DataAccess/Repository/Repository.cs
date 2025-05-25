@@ -27,7 +27,7 @@ namespace Decibels.DataAccess.Repository
             this.dbSet = _db.Set<T>();
 
             // Includes Navigation properties based on the Foreign Key relations
-            _db.Products.Include(u => u.Category).Include(u => u.CategoryId);
+            _db.Products.Include(u => u.Category);
         }
 
         public void Add(T entity)
