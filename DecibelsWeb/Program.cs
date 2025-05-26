@@ -33,13 +33,13 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkSto
 builder.Services.ConfigureApplicationCookie(options => {
 
     options.LoginPath = $"/Identity/Account/Login";
-    options.LogoutPath = $"/Identity/Account/Loout";
+    options.LogoutPath = $"/Identity/Account/Logout";
     options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
 });
 
 builder.Services.AddAuthentication().AddFacebook(options => {
-    options.AppId = "866082252111647";
-    options.AppSecret = "1fb194a31882a20c76445678152e1920";
+    options.AppId = builder.Configuration["Authentication:Facebook:AppId"];
+    options.AppSecret = builder.Configuration["Authentication:Facebook:AppSecret"];
 });
 
 
