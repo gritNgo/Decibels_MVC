@@ -1,6 +1,6 @@
 # Decibels - Real-world E-commerce Application
 
-**Decibels** is a real-world e-commerce application for musical instruments, deployed on Azure. It showcases the use of a wide range of modern technologies and development practices.
+**Decibels** is a real-world e-commerce application for musical instruments, deployed on Azure. It showcases the use of a wide range of modern technologies and development practices. **(To complete a test purchase, use card number `4242424242424242` with any valid future expiry date and CVC)**
 
 ---
 
@@ -19,8 +19,8 @@
 
 ### Azure Services & Cloud Practices
 - **Azure App Service**: Hosting the web application with a focus on scalability and reliability.
-  - **Deployment Slots (Staging and Production)**: For zero-downtime deployments and testing in a pre-production environment.
-  - **Secure Configuration with Application Settings**: Managing sensitive data (e.g., connection strings, API keys) securely in the cloud, separate from source code.
+  - **Deployment Slots (Staging and Production)**: For zero-downtime deployments and testing in a pre-production environment.
+  - **Secure Configuration with Application Settings**: Managing sensitive data (e.g., connection strings, API keys) securely in the cloud, separate from source code.
 - **Azure SQL Server & SQL Database**: Reliable and scalable relational database for storing application data.
 - **Azure Blob Storage**: Utilized for persistent storage and serving of product images, enhancing performance and scalability.
 - **Azure Active Directory Workload Identity**: For secure, automated authentication of CI/CD pipelines to Azure resources, eliminating the need for secrets in GitHub Actions.
@@ -31,7 +31,7 @@
 - **User Registration & Authentication**: Secure registration and login functionalities.
 - **Shopping Cart Management**: Comprehensive CRUD operations for customers to manage their cart items.
 - **Order Management**: Full CRUD capabilities for order processing, accessible by authorized roles (Customer/Admin/Employee/Company).
-- **Secure Payments (Stripe)**: Integration of Stripe for seamless and secure payment processing.
+- **Secure Payments (Stripe)**: Integration of Stripe for seamless and secure payment processing. 
 - **Social Login**: Enhanced user experience with Facebook registration/login.
 - **Responsive Design**: Ensuring optimal viewing experience across various devices (desktop, tablet, mobile).
 - **REST API**: Underlying API design for data interaction.
