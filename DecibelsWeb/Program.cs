@@ -9,6 +9,7 @@ using Stripe;
 using Decibels.DataAccess.DbInitializer;
 using Azure.Storage.Blobs;
 using DecibelsWeb.Services;
+using Microsoft.AspNetCore.Authentication.Facebook;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,6 +41,7 @@ builder.Services.ConfigureApplicationCookie(options => {
 builder.Services.AddAuthentication().AddFacebook(options => {
     options.AppId = builder.Configuration["Authentication:Facebook:AppId"];
     options.AppSecret = builder.Configuration["Authentication:Facebook:AppSecret"];
+    options.AccessDeniedPath = "/Identity/Account/ExternalLogin";
 });
 
 
