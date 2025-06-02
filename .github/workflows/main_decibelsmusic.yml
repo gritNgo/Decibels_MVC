@@ -7,12 +7,12 @@ on:
   push:
     branches:
       - main
-      - develop 
-  pull_request: 
+      - develop # Ensures pushes to both main and develop trigger the workflow
+  pull_request:
     branches:
       - main
-      - develop # Branches PRs should trigger the workflow
-  workflow_dispatch:
+      - develop # Ensures PRs targeting these branches trigger the workflow
+  workflow_dispatch: # Allows manual triggering from GitHub Actions UI
 
 jobs:
   build:
@@ -26,30 +26,62 @@ jobs:
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.x'
+          dotnet-version: '8.x' # Use your specific .NET version
 
       - name: Build with dotnet
-        run: dotnet build --configuration Release
+        run: dotnet build --configuration Release # Adjust path if your solution file is not at the root
 
       - name: dotnet publish
-        # Changed path to GITHUB_WORKSPACE for artifact consistency
-        run: dotnet publish -c Release -o "${{env.GITHUB_WORKSPACE}}\myapp"
+        run: dotnet publish -c Release -o "${{env.GITHUB_WORKSPACE}}\myapp" # Publishes app to 'myapp' folder
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
-          name: .net-app
-          path: ${{env.GITHUB_WORKSPACE}}\myapp
+          name: .net-app # Name of the artifact
+          path: ${{env.GITHUB_WORKSPACE}}\myapp # Path to the published app
 
-  deploy: 
+  deploy-production: # Renamed from 'deploy' for clarity
     runs-on: windows-latest
-    needs: build
-    if: github.ref == 'refs/heads/main' # Only deploy 'main' branch to Production
-    environment:
-      name: 'Production' 
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    needs: build # Depends on the 'build' job completing successfully
+    if: github.ref == 'refs/heads/main' # This condition makes sure this job ONLY runs for the 'main' branch
+    environment: # Links to a GitHub environment for auditing/protections
+      name: 'Production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }} # Populates the environment URL in GitHub
     permissions:
-      id-token: write # This is crucial for workload identity
+      id-token: write # Crucial for Workload Identity Federation
+      contents: read
+
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: .net-app # Downloads the artifact created by the 'build' job
+
+      - name: Login to Azure (Production)
+        uses: azure/login@v2
+        with:
+          # These are your existing production secrets for the production service principal
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_A165A078E555406A8E546CE17C8078A4 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_C4786CBB944B4FCCA923F2A738DB5F12 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_CD4C7D72EE744502AFA2260973F95BE5 }}
+
+      - name: Deploy to Azure Web App (Production)
+        id: deploy-to-webapp # ID for this step (used to output webapp-url)
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'decibelsmusic' # App Service name
+          slot-name: 'Production' # Explicitly targets the 'Production' slot (main slot)
+          package: . # Deploys the downloaded artifact (current directory)
+
+  deploy-staging: # <--- New staging slot job
+    runs-on: windows-latest
+    needs: build # Depends on the 'build' job completing successfully
+    if: github.ref == 'refs/heads/develop' # This condition makes sure this job ONLY runs for the 'develop' branch
+    environment: # Links to a GitHub environment for auditing/protections
+      name: 'Staging'
+      url: 'https://decibelsmusic-staging.azurewebsites.net/' 
+    permissions:
+      id-token: write # Crucial for Workload Identity Federation for the staging service principal
       contents: read
 
     steps:
@@ -58,17 +90,18 @@ jobs:
         with:
           name: .net-app
 
-      - name: Login to Azure
+      - name: Login to Azure (Staging)
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_A165A078E555406A8E546CE17C8078A4 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_C4786CBB944B4FCCA923F2A738DB5F12 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_CD4C7D72EE744502AFA2260973F95BE5 }}
+          # Secrets for NEWLY CREATED STAGING SERVICE PRINCIPAL
+          client-id: ${{ secrets.AZURE_CLIENT_ID_STAGING }} 
+          tenant-id: ${{ secrets.AZURE_TENANT_ID_STAGING }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID_STAGING }}
 
-      - name: Deploy to Azure Web App
-        id: deploy-to-webapp
+      - name: Deploy to Azure Web App (Staging Slot)
+        id: deploy-to-staging-webapp # Unique ID for this step
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'decibelsmusic' 
-          slot-name: 'Production' 
-          package: .
+          app-name: 'decibelsmusic' # App Service name
+          slot-name: 'staging'       # Azure staging slot 
+          package: . # Deploys the downloaded artifact
