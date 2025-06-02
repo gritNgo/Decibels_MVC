@@ -109,27 +109,43 @@ namespace DecibelsWeb.Areas.Identity.Pages.Account
         public async Task<IActionResult> OnGetCallbackAsync(string returnUrl = null, string remoteError = null)
         {
             returnUrl = returnUrl ?? Url.Content("~/");
+
+            // 1. Handle explicit cancellation/error from external provider
             if (remoteError != null)
             {
-                ErrorMessage = $"Error from external provider: {remoteError}";
+                _logger.LogWarning("External login callback received remote error: {RemoteError}", remoteError); // Log the error
+                ErrorMessage = $"Error from external provider: {remoteError}"; // User-friendly message
                 return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
             }
+
+            // 2. Get external login information
             var info = await _signInManager.GetExternalLoginInfoAsync();
             if (info == null)
             {
+                _logger.LogError("External login callback failed to load external login information (info was null).");
                 ErrorMessage = "Error loading external login information.";
                 return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
             }
+
+            // Explicit check for info.Principal in case it's null in an edge case
+            if (info.Principal == null)
+            {
+                _logger.LogError("External login information loaded but info.Principal was null.");
+                ErrorMessage = "Invalid external login information received.";
+                return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
+            }
+
 
             // Sign in the user with this external login provider if the user already has a login.
             var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
             if (result.Succeeded)
             {
-                _logger.LogInformation("{Name} logged in with {LoginProvider} provider.", info.Principal.Identity.Name, info.LoginProvider);
+                _logger.LogInformation("{Name} logged in with {LoginProvider} provider.", info.Principal.Identity?.Name ?? "Unknown", info.LoginProvider);
                 return LocalRedirect(returnUrl);
             }
             if (result.IsLockedOut)
             {
+                _logger.LogWarning("User account locked out during external login from {LoginProvider}.", info.LoginProvider);
                 return RedirectToPage("./Lockout");
             }
             else
@@ -137,15 +153,23 @@ namespace DecibelsWeb.Areas.Identity.Pages.Account
                 // If the user does not have an account, then ask the user to create an account.
                 ReturnUrl = returnUrl;
                 ProviderDisplayName = info.ProviderDisplayName;
-                if (info.Principal.HasClaim(c => c.Type == ClaimTypes.Email))
+
+                Input = new InputModel(); // Initialize Input to avoid NullReferenceException if claims are missing
+
+                // Safely extract claims to avoid NullReferenceExceptions if a claim is missing
+                Input.Email = info.Principal.FindFirstValue(ClaimTypes.Email);
+                Input.Name = info.Principal.FindFirstValue(ClaimTypes.Name); // Assuming this claim exists
+
+                // If email is required and not present, handle it
+                if (string.IsNullOrEmpty(Input.Email))
                 {
-                    Input = new InputModel
-                    {
-                        Email = info.Principal.FindFirstValue(ClaimTypes.Email),
-                        Name = info.Principal.FindFirstValue(ClaimTypes.Name)
-                    };
+                    _logger.LogWarning("External login from {LoginProvider} did not provide an email claim.", info.LoginProvider);
+                    // redirect to a registration page that explicitly asks for email
+                    ErrorMessage = "External login requires an email address. Please provide one.";
+                    return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
                 }
-                return Page();
+
+                return Page(); // Redirects to the ExternalLoginConfirmation page if not already registered
             }
         }
 
