@@ -1,96 +1,68 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
+
 name: Build and deploy ASP.Net Core app to Azure Web App - decibels-music
+
 on:
   push:
     branches:
       - main
-      - develop
-  pull_request: # <--- PR section
-    branches:
-      - main
-      - develop # <--- Branches PRs should trigger the workflow
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: windows-latest
     permissions:
-      contents: read
+      contents: read #This is required for actions/checkout
+
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.x'
+
       - name: Build with dotnet
         run: dotnet build --configuration Release
+
       - name: dotnet publish
-        run: dotnet publish -c Release -o "${{env.GITHUB_WORKSPACE}}\myapp"
+        run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
+
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: .net-app
-          path: ${{env.GITHUB_WORKSPACE}}\myapp
+          path: ${{env.DOTNET_ROOT}}/myapp
 
-  deploy-production:
+  deploy:
     runs-on: windows-latest
     needs: build
-    if: github.ref == 'refs/heads/main'
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write # This is crucial for workload identity
-      contents: read
+      id-token: write #This is required for requesting the JWT
+      contents: read #This is required for actions/checkout
+
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: .net-app
+      
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          # --- UPDATED SECRETS HERE ---
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          # --- END UPDATED SECRETS ---
-      - name: Deploy to Azure Web App (Production Slot)
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_AF23CAFFFFF84944AE30A7A1F04D2CEA }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_9996BEEB587349FD9224C33584F8D901 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_693C61D119E946CC9421954B6FDF0FE1 }}
+
+      - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'decibels-music'
           slot-name: 'Production'
           package: .
-
-  deploy-staging:
-    runs-on: windows-latest
-    needs: build
-    if: github.ref == 'refs/heads/develop'
-    environment:
-      name: 'Staging'
-      url: 'https://decibels-music-staging.azurewebsites.net/'
-    permissions:
-      id-token: write # This is crucial for workload identity
-      contents: read
-    steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v4
-        with:
-          name: .net-app
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          # --- UPDATED SECRETS HERE ---
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          # --- END UPDATED SECRETS ---
-      - name: Deploy to Azure Web App (Staging Slot)
-        id: deploy-to-staging-webapp
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: 'decibels-music'
-          slot-name: 'Staging'
-          package: .
+          
