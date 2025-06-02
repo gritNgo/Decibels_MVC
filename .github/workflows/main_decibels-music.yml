@@ -1,19 +1,24 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy ASP.Net Core app to Azure Web App - decibels-music
+name: Build and deploy ASP.Net Core app to Azure Web App - decibelsmusic
 
 on:
   push:
     branches:
       - main
+      - develop 
+  pull_request: 
+    branches:
+      - main
+      - develop # Branches PRs should trigger the workflow
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: windows-latest
     permissions:
-      contents: read #This is required for actions/checkout
+      contents: read # This is required for actions/checkout
 
     steps:
       - uses: actions/checkout@v4
@@ -27,42 +32,43 @@ jobs:
         run: dotnet build --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
+        # Changed path to GITHUB_WORKSPACE for artifact consistency
+        run: dotnet publish -c Release -o "${{env.GITHUB_WORKSPACE}}\myapp"
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
+          path: ${{env.GITHUB_WORKSPACE}}\myapp
 
-  deploy:
+  deploy: 
     runs-on: windows-latest
     needs: build
+    if: github.ref == 'refs/heads/main' # Only deploy 'main' branch to Production
     environment:
-      name: 'Production'
+      name: 'Production' 
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write #This is required for requesting the JWT
-      contents: read #This is required for actions/checkout
+      id-token: write # This is crucial for workload identity
+      contents: read
 
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: .net-app
-      
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_AF23CAFFFFF84944AE30A7A1F04D2CEA }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_9996BEEB587349FD9224C33584F8D901 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_693C61D119E946CC9421954B6FDF0FE1 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_A165A078E555406A8E546CE17C8078A4 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_C4786CBB944B4FCCA923F2A738DB5F12 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_CD4C7D72EE744502AFA2260973F95BE5 }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'decibels-music'
-          slot-name: 'Production'
+          app-name: 'decibelsmusic' 
+          slot-name: 'Production' 
           package: .
-          
